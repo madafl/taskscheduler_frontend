@@ -1,38 +1,201 @@
-.App {
-  text-align: center;
+/* .no-dec-link {
+  float: right;
+}
+.btn {
+  margin-top: 5px;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.submit-form {
+  width: 50%;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.mt-3 {
+  text-align: -webkit-center;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+label {
+  float: left;
+}
+
+.btn-login {
+  float: left;
+}
+.input-group {
+  margin-top: 4px;
+}
+
+.btn-outline-secondary { 
+  margin-left : 4px;
+  margin-bottom:4px;
+}
+.form-control, .form-select {
+  border-radius: 4px!important;
+}
+.row {
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+}
+.top-margin { 
+  margin-top:10px;
+}
+.logo {
+  width:3%;
+  transform: scaleX(-1);
+  margin-top:-5px;
+}
+
+.icon-inside {
+  position:relative;
+}
+.icon-inside i {
+  position:absolute;
+  right:0px;
+  top:15px;
+  padding:10px 10px;
+  opacity : 0.80;
+}
+
+ul {
+  display: inline-flex;
+  list-style-type: none;
+}
+ul a {
+  font-size:18px;
+  align-self: center;
+  margin-left: 4px;
+  margin-right:4px;
+}
+li {
+  color: black;
+  float: left;
+  padding: 8px 16px;
+  text-decoration: none;
+}
+.pagination-diy li:hover:not(.active) {
+  background-color: #ddd;
+} 
+div.pagination-diy a {
+ color:black;
+ text-decoration: none;
+}
+.pagination-diy {
+  margin-top:10px;
+  display: inline-block!important;
+}
+.selected {
+  background-color: 38182F;
   color: white;
+} */
+
+/* START */
+.component {
+  max-width: 90%;
+  height: 50px;
+  background-color: rgb(255, 255, 255);
+  flex:1;
+  border-radius:15px;
+  box-shadow: -6px -5px 0px 5px rgba(100, 99, 99, 0.397);
 }
 
-.App-link {
-  color: #61dafb;
+.sidebar {
+  max-height: 100%;
+  max-width: 50px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  overflow-x: hidden;
+  transition: 0.5s;
+  padding-top: 1rem;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.sidebar a {
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #000000;
+  display: block;
+  transition: 0.3s;
+}
+
+
+.sidebar .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
+ 
+}
+
+.openbtn {
+  font-size: 20px;
+  cursor: pointer;
+  padding: 10px 15px;
+  border: none;
+  background-color:  #36213e00;
+  color: rgb(0, 0, 0)!important;
+
+}
+
+#main {
+  transition: margin-left .5s;
+  padding: 16px;
+  display: block;
+}
+
+/* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
+@media screen and (max-height: 450px) {
+  .sidebar {padding-top: 15px;}
+  .sidebar a {font-size: 18px;}
+  .text {
+    display: none;
   }
-  to {
-    transform: rotate(360deg);
-  }
+}
+#icon { 
+  margin-left:0.5rem;
+  color: rgb(0, 0, 0);
+}
+
+.navbar{
+  margin-left: 50px;
+}
+.dropdown-right{
+  float:right;
+}
+#iconafter {
+  margin-left: -1rem;
+  color: rgb(0, 0, 0);
+}
+
+.navbar-brand {
+  color: rgb(0, 0, 0)!important;
+  margin-left:0.2rem;
+}
+.nav-link {
+  color: rgb(0, 0, 0)!important;
+}
+
+body{
+  max-height:100%;
+  /* background-image: linear-gradient(to right top, #36213e, #563b64, #77588c, #9976b8, #bc96e6); */
+}
+.open {
+  /* background-image: linear-gradient(to right top, #36213e, #563b64, #77588c, #9976b8, #bc96e6); */
+  background-color: white;
+}
+.wrapper {
+  height: 100vh;
+  width: 100%;
+  padding: 20px;
+  /* background-image: linear-gradient(to right top, #36213e, #563b64, #77588c, #9976b8, #bc96e6); */
+  display:flex;
+  flex-direction:column;
+}
+.top {
+  width: 100%;
+  height: 50px;
+}
+.align-dropdown{
+  position:absolute;
+  right:10px;
 }
