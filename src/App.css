@@ -199,3 +199,107 @@ body{
   position:absolute;
   right:10px;
 }
+.swatch {
+  padding: 5px;
+  background: #fff;
+  border-radius: 1px;
+  box-shadow: 0 0 0 1px rgba(0,0,0,.1);
+  display: inline-block;
+  cursor: pointer;
+}
+.popoverColorPicker {
+  position:absolute;
+  z-index: 2;
+}
+.cover {
+  position: fixed;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left:0px;
+}
+.bgcolor{
+  width: 36px;
+  height: 14px;
+  border-radius: 2px;
+  background: #AEB8C2;
+}
+.progresscolor{
+  width: 36px;
+  height: 14px;
+  border-radius: 2px;
+  background: #8282F5;
+}
+.form-control {
+  border-radius: 10px!important;
+  /* background-color: #dadada; */
+  margin-top: 5px;
+}
+
+@media (min-width: 576px) {
+  .modal-dialog {
+      max-width: 60%!important;
+  }
+}
+.description {
+  margin-top:10px;
+  border-radius: 10px;
+  border: 1px solid #d4d4d4;
+}
+
+
+/* TEST POPPER  */
+
+#tooltip {
+  display: inline-block;
+  background: #ffffff;
+  color: #643045;
+  font-weight: bold;
+  padding: 5px 10px;
+  font-size: 13px;
+  border-radius: 4px;
+  /* visibility: hidden; */
+}
+
+#arrow,
+#arrow::before {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: inherit;
+}
+
+#arrow {
+  visibility: hidden;
+  z-index:-999999;
+}
+
+#arrow::before {
+  visibility: visible;
+  content: '';
+  transform: rotate(45deg);
+}
+
+#tooltip[data-popper-placement^='top'] > #arrow {
+  bottom: -4px;
+}
+
+#tooltip[data-popper-placement^='bottom'] > #arrow {
+  top: -4px;
+}
+
+#tooltip[data-popper-placement^='left'] > #arrow {
+  right: -4px;
+}
+
+#tooltip[data-popper-placement^='right'] > #arrow {
+  left: -4px;
+}
+
+.btn-xs {
+  margin:1%;
+}
+
+.displayOver {
+  z-index: 999999999;
+}

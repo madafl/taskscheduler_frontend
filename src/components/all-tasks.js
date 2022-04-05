@@ -1,103 +1,151 @@
 import "bootstrap/dist/css/bootstrap.min.css";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect} from "react";
 import DataService from "../services/http-request";
+import ChangeViewMode from "./changeViewMode";
 import { Gantt, Task, EventOption, StylingOption, ViewMode, DisplayOption } from 'gantt-task-react';
 import "gantt-task-react/dist/index.css";
-import moment from 'moment';
-// list of the rest from database
+import AddTask from "./add-task";
+import { createPopper } from '@popperjs/core';
+import TasksSettings from "./tasks-settings";
+import {bootstrap, Modal} from 'bootstrap';
+import TaskPopup from "./task-popup";
 
 const AllTasks = props => {
+  const [tasks, setTasks] = useState([]);
+  const [rendered, setRendered] = useState(false);
+  const [view, setView] = React.useState(ViewMode.Day);
+  const [isChecked, setIsChecked] = React.useState(true);
+  const [show, setShow] = useState(false);
+  const [taskId, setTaskId] = useState('');
+  const [clickedElementPosition, setClickedElementPosition] = useState({left:'',right:'', top:'', bottom:'', x:'', y:''});
   
-    const [tasks, setTasks] = useState([]); // all restaurants
-    
-    useEffect(() => {
-      retrieveTasks();
-     
-    });
-    
     const retrieveTasks = () => {
         DataService.getAll()
         .then(response => {
-            setTasks(response.data.tasks); 
-        })
+          response.data.tasks.map((task) => {
+            const newTask = {
+              start: new Date(task.start),
+              end: new Date(task.end),
+              name: task.name,
+              id: task._id,
+              type: task.type, // project, milestone, task  
+              progress: Number(task.progress),
+              styles: 
+              {
+                backgroundColor:task.backgroundColor,
+                backgroundSelectedColor: task.backgroundColor,
+                progressColor:task.progressColor,
+                progressSelectedColor: task.progressColor,
+              },
+              // isDisabled: false, //cant be modified 
+              // project: "Project 1", // proiectul de care apartine?
+              // dependencies:[],
+              // hideChildren: false,
+              // displayOrder: 2,
+
+            };
+          return tasks.push(newTask);
+          })
+          setRendered(true);
+          })
         .catch(e => {
         console.log(e);
         });
     };
 
-    const convertDate = (date) => {
-        const newDate = new Date(Date.parse(date));
-        return newDate;
+    
+    useEffect(() => {
+      retrieveTasks();
+    },[]);
+      
+    const handleTaskChange = (task) => {
+      let newTasks = tasks.map((t) => (t.id === task.id ? task : t)); // newTask este taskul modificat 
+      setTasks(newTasks);
     }
-    
-    
-    
-    let tasks2 = [
-      {
-        start: new Date(2020, 1, 1),
-        end: new Date(2020, 1, 2),
-        name: 'Idea',
-        id: 'Task 0',
-        type:'task',
-        progress: 45,
-        isDisabled: true,
-        styles: { progressColor: '#ffbb54', progressSelectedColor: '#ff9e0d' },
-      },
-      {
-        start: new Date(2020, 1, 3),
-        end: new Date(2020, 1,7),
-        name: 'Idea2', 
-        id: 'Task 1',
-        type:'project',
-        progress: 25,
-        isDisabled: true,
-        styles: { progressColor: '#ffbb54', progressSelectedColor: '#ff9e0d' },
-      },
-      {
-      name:"task 1",
-      body:"descriere task 1",
-      start:new Date('03/09/22'),
-      end:new Date('03/09/22'),
-      progress:"50",
-    
+    const handleTaskDelete = (task) => {
+      const conf = window.confirm("Are you sure about " + task.name + " ?");
+      if (conf) {
+        setTasks(tasks.filter((t) => t.id !== task.id));
+      }
+      return conf;
     }
-  ];
+    const handleProgressChange = (task) => {
+      setTasks(tasks.map((t) => (t.id === task.id ? task : t)));
+      console.log("On progress change Id:" + task.id);
+    }
+    const handleDoubleClick = (task) => {
+      setShow(!show);
+      setTaskId(task.id);
+    }
+    const getEl = (e) => {
+      const element = e.target;
+      const parentTag = element.parentNode.tagName;
+      const parentClass = element.parentNode.className;
+      const parent2Class = element.parentNode.parentNode.className;
+      
+      if (element.tagName === "rect" && parentTag === "g" && parentClass.baseVal === '' && parent2Class.baseVal !== 'handleGroup') {
+      var pos =  e.target.getBoundingClientRect();
+      var left = pos.left;
+      var top = pos.top;
+      var right= pos.right;
+      var bottom = pos.bottom;
+      var x = pos.x;
+      var y = pos.y;
+      setClickedElementPosition({left:left, top:top, right:right, bottom:bottom, x:x, y:y});
+      } else {
+          return null;
+      }
+    }
   
 
   return (
     <div>
-        <div className="row">
-        <Gantt tasks={tasks2} />
+      { rendered  ? (
+        <div>
+          <ChangeViewMode onViewModeChange={(viewMode) => setView(viewMode)}/>
+          <hr></hr>
+          { tasks ? (
+          <div onClick={getEl}>
+            <Gantt tasks={tasks} 
+            viewMode={view} 
+            onDateChange={handleTaskChange} 
+            onDelete={handleTaskDelete} 
+            onProgressChange={handleProgressChange}
+            listCellWidth={isChecked ? "155px" : ""}
+            onDoubleClick={handleDoubleClick}
+            />
+            <AddTask user = {props.user}/>
+            {show ? ( <TasksSettings show = {show} id = {taskId} clickedElementPosition={clickedElementPosition}/>) : (null)} 
+          </div>
+          ) : (
+          <AddTask user = {props.user}/>
+          )}
+        </div>
+       ) : (
+        <AddTask user = {props.user}/>
+      ) }
+    </div>  
       
-        {tasks.map((task, index) => {
-            // 2022-03-09T22:00:00.000Z
-            // Mon Mar 07 2022 16:41:34 GMT+0200 (Eastern European Standard Time
-            // new Date(Date.parse(task.date[0])) converting date
-            return (
-            <div className="col-lg-4 pb-1" key={index}>
-                <div className="card">
-                    
-                <div className="card-body" >
-                    <h5 className="card-title" >{task.name}</h5>
-                    <p className="card-text">
-                      {/* <strong>Descriere: </strong>{task.body}<br/> */}
-                      <strong>Start: </strong>{moment.utc(task.start).format('MM/DD/YY')}<br/>
-                      <strong>End: </strong>{moment.utc(task.end).format('MM/DD/YY')}<br/>
-                      <strong>Progress: </strong>{task.progress}<br/>
-                      {/* <strong>User Id: </strong>{task.user_info.user_id}<br/> */}
-                    </p>
-                    <div className="row">
-                    </div>
-                </div>
-                </div>
-                
-            </div>
-            );
-        })}
-        </div> 
-    </div>
+       
+    
   );
 }
 
+// function getStartEndDateForProject(tasks, projectId) {
+//   const projectTasks = tasks.filter((t) => t.project === projectId);
+//   let start = projectTasks[0].start;
+//   let end = projectTasks[0].end;
+
+//   for (let i = 0; i < projectTasks.length; i++) {
+//     const task = projectTasks[i];
+//     if (start.getTime() > task.start.getTime()) {
+//       start = task.start;
+//     }
+//     if (end.getTime() < task.end.getTime()) {
+//       end = task.end;
+//     }
+//   }
+//   return [start, end];
+// }
 export default AllTasks;
  

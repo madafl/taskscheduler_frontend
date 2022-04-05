@@ -4,11 +4,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import Register from "./components/auth/register";
 import { decodeToken } from "react-jwt";
-// import Calendar from "./components/calendar";
 import Login from "./components/auth/login";
 import AllTasks from "./components/all-tasks";
 import Task from "./components/task";
-import AddTask from "./components/add-task";
 
 function App() {
   let navigate = useNavigate();
@@ -56,19 +54,16 @@ function App() {
             <a className="navbar-brand" href="/tasks">
               All tasks
             </a>
-            <a className="navbar-brand" href="/add">
-              Create Task
-            </a>
           </div>
           <div className="collapse navbar-collapse navbar-right" id="navbarNavDropdown">
-          <ul class="navbar-nav">
+          <ul className="navbar-nav">
                 { user.username !== "" ? (
                 <div className="align-dropdown">
-                <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <i class="fa-solid fa-user"></i> {user.username}
+                <li className="nav-item dropdown">
+                  <a className="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <i className="fa-solid fa-user"></i> {user.username}
                   </a>
-                  <div class="dropdown-menu align-dropdown" aria-labelledby="navbarDropdownMenuLink">
+                  <div className="dropdown-menu align-dropdown" aria-labelledby="navbarDropdownMenuLink">
                     <a onClick={logout} className="dropdown-item" style={{cursor:'pointer'}}  href="http://localhost:3000/">
                       Logout {user.username}
                     </a>
@@ -100,7 +95,7 @@ function App() {
           <Route path="/tasks" element={<AllTasks user ={user} login={login}/>} />
           <Route path="/id/:id" element={<Task user ={user} login={login}/>} /> 
          {/* <Route path="/tasks/:id/add" element={<AddTask user = {user} isLoggedIn={isLoggedIn}/>} /> */}
-          <Route path="/add" element={<AddTask user = {user} isLoggedIn={isLoggedIn}/>} />
+          {/* <Route path="/add" element={<AddTask user = {user} isLoggedIn={isLoggedIn}/>} /> */}
            
           <Route path="*" element={
             <main style={{ padding: "1rem" }}>

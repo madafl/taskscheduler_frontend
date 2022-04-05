@@ -81,7 +81,7 @@ const Register = props => {
         <div> 
           <div className="form-group icon-inside">
             <label htmlFor="password">Password</label>
-            <i class={showPassword ? "fa fa-eye-slash fa-2x" : "fa fa-eye fa-2x"} onClick={handleShowPassword }></i> 
+            <i className={showPassword ? "fa fa-eye-slash fa-2x" : "fa fa-eye fa-2x"} onClick={handleShowPassword }></i> 
             <input 
               className="form-control"
               id="password"
