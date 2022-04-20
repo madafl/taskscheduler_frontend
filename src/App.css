@@ -87,12 +87,20 @@ div.pagination-diy a {
 } */
 
 /* START */
+html,
+body {
+  height: 100%;
+}
+
+.full-height {
+  height: 100%;
+}
 .component {
   max-width: 90%;
   height: 50px;
   background-color: rgb(255, 255, 255);
-  flex:1;
-  border-radius:15px;
+  flex: 1;
+  border-radius: 15px;
   box-shadow: -6px -5px 0px 5px rgba(100, 99, 99, 0.397);
 }
 
@@ -117,14 +125,12 @@ div.pagination-diy a {
   transition: 0.3s;
 }
 
-
 .sidebar .closebtn {
   position: absolute;
   top: 0;
   right: 25px;
   font-size: 36px;
   margin-left: 50px;
- 
 }
 
 .openbtn {
@@ -132,35 +138,38 @@ div.pagination-diy a {
   cursor: pointer;
   padding: 10px 15px;
   border: none;
-  background-color:  #36213e00;
-  color: rgb(0, 0, 0)!important;
-
+  background-color: #36213e00;
+  color: rgb(0, 0, 0) !important;
 }
 
 #main {
-  transition: margin-left .5s;
+  transition: margin-left 0.5s;
   padding: 16px;
   display: block;
 }
 
 /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
 @media screen and (max-height: 450px) {
-  .sidebar {padding-top: 15px;}
-  .sidebar a {font-size: 18px;}
+  .sidebar {
+    padding-top: 15px;
+  }
+  .sidebar a {
+    font-size: 18px;
+  }
   .text {
     display: none;
   }
 }
-#icon { 
-  margin-left:0.5rem;
+#icon {
+  margin-left: 0.5rem;
   color: rgb(0, 0, 0);
 }
 
-.navbar{
+.navbar {
   margin-left: 50px;
 }
-.dropdown-right{
-  float:right;
+.dropdown-right {
+  float: right;
 }
 #iconafter {
   margin-left: -1rem;
@@ -168,15 +177,15 @@ div.pagination-diy a {
 }
 
 .navbar-brand {
-  color: rgb(0, 0, 0)!important;
-  margin-left:0.2rem;
+  color: rgb(0, 0, 0) !important;
+  margin-left: 0.2rem;
 }
 .nav-link {
-  color: rgb(0, 0, 0)!important;
+  color: rgb(0, 0, 0) !important;
 }
 
-body{
-  max-height:100%;
+body {
+  max-height: 100%;
   /* background-image: linear-gradient(to right top, #36213e, #563b64, #77588c, #9976b8, #bc96e6); */
 }
 .open {
@@ -188,27 +197,27 @@ body{
   width: 100%;
   padding: 20px;
   /* background-image: linear-gradient(to right top, #36213e, #563b64, #77588c, #9976b8, #bc96e6); */
-  display:flex;
-  flex-direction:column;
+  display: flex;
+  flex-direction: column;
 }
 .top {
   width: 100%;
   height: 50px;
 }
-.align-dropdown{
-  position:absolute;
-  right:10px;
+.align-dropdown {
+  position: absolute;
+  right: 10px;
 }
 .swatch {
   padding: 5px;
   background: #fff;
   border-radius: 1px;
-  box-shadow: 0 0 0 1px rgba(0,0,0,.1);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
   display: inline-block;
   cursor: pointer;
 }
 .popoverColorPicker {
-  position:absolute;
+  position: absolute;
   z-index: 2;
 }
 .cover {
@@ -216,37 +225,36 @@ body{
   top: 0px;
   right: 0px;
   bottom: 0px;
-  left:0px;
+  left: 0px;
 }
-.bgcolor{
+.bgcolor {
   width: 36px;
   height: 14px;
   border-radius: 2px;
-  background: #AEB8C2;
+  background: #aeb8c2;
 }
-.progresscolor{
+.progresscolor {
   width: 36px;
   height: 14px;
   border-radius: 2px;
-  background: #8282F5;
+  background: #8282f5;
 }
 .form-control {
-  border-radius: 10px!important;
+  border-radius: 10px !important;
   /* background-color: #dadada; */
   margin-top: 5px;
 }
 
 @media (min-width: 576px) {
   .modal-dialog {
-      max-width: 60%!important;
+    max-width: 60% !important;
   }
 }
 .description {
-  margin-top:10px;
+  margin-top: 10px;
   border-radius: 10px;
   border: 1px solid #d4d4d4;
 }
-
 
 /* TEST POPPER  */
 
@@ -258,7 +266,9 @@ body{
   padding: 5px 10px;
   font-size: 13px;
   border-radius: 4px;
-  /* visibility: hidden; */
+  width: fit-content;
+  height: fit-content;
+  box-shadow: inset 0px 0px 20px 0px #b9b9b97a;
 }
 
 #arrow,
@@ -271,35 +281,41 @@ body{
 
 #arrow {
   visibility: hidden;
-  z-index:-999999;
+  z-index: -999999;
 }
 
 #arrow::before {
   visibility: visible;
-  content: '';
+  content: "";
   transform: rotate(45deg);
 }
 
-#tooltip[data-popper-placement^='top'] > #arrow {
+#tooltip[data-popper-placement^="top"] > #arrow {
   bottom: -4px;
 }
 
-#tooltip[data-popper-placement^='bottom'] > #arrow {
+#tooltip[data-popper-placement^="bottom"] > #arrow {
   top: -4px;
 }
 
-#tooltip[data-popper-placement^='left'] > #arrow {
+#tooltip[data-popper-placement^="left"] > #arrow {
   right: -4px;
 }
 
-#tooltip[data-popper-placement^='right'] > #arrow {
+#tooltip[data-popper-placement^="right"] > #arrow {
   left: -4px;
 }
 
-.btn-xs {
-  margin:1%;
+.mr-3 {
+  margin-right: 0.5rem;
 }
 
 .displayOver {
   z-index: 999999999;
+}
+
+/* PROGRESS ON CARD STYLE */
+.progress-bar-animated {
+  -webkit-animation: progress-bar-stripes 1s linear infinite;
+  animation: progress-bar-stripes 1s linear infinite;
 }
