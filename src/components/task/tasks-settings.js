@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { usePopper } from "react-popper";
+import { MDBBtn } from "mdb-react-ui-kit";
 
 const TasksSettings = props => {
   const task = props.task;
@@ -22,20 +22,21 @@ const TasksSettings = props => {
             className="settings"
           >
             <div>
-              <button
-                type="button"
-                className="btn btn-danger btn-sm mr-3 settings"
+              <MDBBtn
+                className="m-1"
+                size="sm"
+                color="danger"
                 onClick={() => props.handleTaskDelete(task)}
               >
                 Sterge
-              </button>
-              <button
-                type="button"
-                className="btn btn-primary btn-sm settings"
-                onClick={() => props.editTask(task.id)}
+              </MDBBtn>
+              <MDBBtn
+                className="m-1"
+                size="sm"
+                // onClick={() => props.editTask(task.id)}
               >
                 Editeaza
-              </button>
+              </MDBBtn>
             </div>
             <div id="arrow" data-popper-arrow></div>
           </div>

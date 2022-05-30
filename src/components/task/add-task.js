@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import DataService from "../services/http-request";
-import { Link, useParams, useLocation, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import DataService from "../../services/http-request";
+import { useLocation, useNavigate } from "react-router-dom";
 import TaskPopup from "./task-popup";
 
 const AddTask = props => {

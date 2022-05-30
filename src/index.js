@@ -1,13 +1,14 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import App from './App';
-import {BrowserRouter} from "react-router-dom";
+import React from "react";
+import ReactDOM from "react-dom";
+import App from "./App";
+import { BrowserRouter } from "react-router-dom";
+import "mdb-react-ui-kit/dist/css/mdb.min.css";
 
-ReactDOM.render((
+ReactDOM.render(
   <BrowserRouter>
     <App />
-  </BrowserRouter>),
-  document.getElementById('root')
+  </BrowserRouter>,
+  document.getElementById("root")
 );
 
 // If you want to start measuring performance in your app, pass a function

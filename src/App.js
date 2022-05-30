@@ -1,30 +1,51 @@
-import React, { useEffect } from "react";
-import { Routes, Route, Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
-import Register from "./components/auth/register";
 import { decodeToken } from "react-jwt";
 import Login from "./components/auth/login";
-import AllTasks from "./components/all-tasks";
-import Task from "./components/task";
-import Dashboard from "./components/dashboard/dashboard";
-import AllProjects from "./components/all-projects";
-import Project from "./components/project";
+import AllTasks from "./components/task/all-tasks";
+import Task from "./components/task/all-tasks";
+import AllProjects from "./components/project/all-projects";
+import LandingPage from "./components/landing-page";
+import Avatar from "react-avatar";
+import Profile from "./components/dashboard/profile";
+import {
+  MDBContainer,
+  MDBNavbar,
+  MDBNavbarBrand,
+  MDBNavbarToggler,
+  MDBIcon,
+  MDBNavbarNav,
+  MDBNavbarItem,
+  MDBNavbarLink,
+  MDBDropdown,
+  MDBDropdownToggle,
+  MDBDropdownMenu,
+  MDBDropdownItem,
+  MDBDropdownLink,
+  MDBCollapse,
+} from "mdb-react-ui-kit";
 
 function App() {
   let navigate = useNavigate();
   const initialUserState = {
     username: "",
     email: "",
-    password: "",
   };
   const [token, setToken] = React.useState(localStorage.getItem("token"));
   const [user, setUser] = React.useState(initialUserState);
+  const [userStorage, setUserStorage] = React.useState(
+    localStorage.getItem("user")
+  );
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  const [showBasic, setShowBasic] = useState(false);
+  const [userId, setUserId] = useState("");
 
   async function login(user) {
     setUser(user);
     setIsLoggedIn(true);
+    navigate("/projects", { replace: true });
   }
 
   async function logout() {
@@ -33,101 +54,105 @@ function App() {
     navigate("/", { replace: true });
   }
   useEffect(() => {
-    if (token !== null) {
-      setIsLoggedIn(true);
+    if (token !== null && userStorage !== null) {
       const decodedToken = decodeToken(token);
-      setUser({ username: decodedToken.username });
+      const user_json = JSON.parse(userStorage);
+      setUserId(decodedToken.token); // id-ul userului
+      setUser(user_json);
+      setIsLoggedIn(true);
     } else {
       setIsLoggedIn(false);
     }
-  }, [token]);
+  }, []);
 
   return (
-    // <div className="wrapper">
-    <div>
-      {/* <nav className="navbar navbar-expand top"> */}
-
-      <nav className="navbar navbar-expand-lg navbar-light bg-light">
-        <div className="navbar-left">
-          <a className="navbar-brand" href="/">
-            Task Scheduler
-          </a>
-          <a className="navbar-brand" href="/tasks">
-            All tasks
-          </a>
-        </div>
-        <div
-          className="collapse navbar-collapse navbar-right"
-          id="navbarNavDropdown"
-        >
-          <ul className="navbar-nav">
+    <MDBContainer fluid>
+      <MDBNavbar expand="lg" light bgColor="light">
+        <MDBContainer fluid>
+          <MDBNavbarBrand href="/">Task Scheduler</MDBNavbarBrand>
+          <MDBNavbarToggler
+            aria-controls="navbarSupportedContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+            onClick={() => setShowBasic(!showBasic)}
+          >
+            <MDBIcon icon="bars" fas />
+          </MDBNavbarToggler>
+          <MDBCollapse navbar show={showBasic}>
+            <MDBNavbarNav className="mr-auto mb-2 mb-lg-0">
+              <MDBNavbarItem>
+                <MDBNavbarLink active aria-current="page" href="/projects">
+                  Proiecte
+                </MDBNavbarLink>
+              </MDBNavbarItem>
+            </MDBNavbarNav>
             {user.username !== "" ? (
-              <div className="align-dropdown">
-                <li className="nav-item dropdown">
-                  <a
-                    className="nav-link dropdown-toggle"
-                    href="#"
-                    id="navbarDropdownMenuLink"
-                    data-toggle="dropdown"
-                    aria-haspopup="true"
-                    aria-expanded="false"
-                  >
-                    <i className="fa-solid fa-user"></i> {user.username}
-                  </a>
-                  <div
-                    className="dropdown-menu align-dropdown"
-                    aria-labelledby="navbarDropdownMenuLink"
-                  >
-                    <a
-                      onClick={logout}
-                      className="dropdown-item"
-                      style={{ cursor: "pointer" }}
-                      href="http://localhost:3000/"
-                    >
-                      Logout {user.username}
-                    </a>
-                  </div>
-                </li>
-              </div>
+              <MDBDropdown className="mr-auto mb-2 mb-lg-0 w-auto float-right">
+                <MDBDropdownToggle
+                  tag="a"
+                  className="nav-link"
+                  style={{ cursor: "pointer" }}
+                >
+                  <Avatar
+                    className="me-1"
+                    name={user.username}
+                    round={true}
+                    size="30"
+                    textSizeRatio={1.75}
+                  />
+                  {user.username}
+                </MDBDropdownToggle>
+                <MDBDropdownMenu>
+                  <MDBDropdownItem>
+                    <MDBDropdownLink onClick={logout} href="/">
+                      Logout
+                    </MDBDropdownLink>
+                  </MDBDropdownItem>
+                  <MDBDropdownItem>
+                    <MDBDropdownLink href="/profile">Profil</MDBDropdownLink>
+                  </MDBDropdownItem>
+                </MDBDropdownMenu>
+              </MDBDropdown>
             ) : (
-              <div className="">
-                <li className="nav-item active">
-                  <Link to={"/register"} className="nav-link">
-                    Register
-                  </Link>
-                </li>
-                <Link to={"/login"} className="nav-link">
-                  Login
-                </Link>
-              </div>
+              <MDBNavbarNav className="mr-auto mb-2 mb-lg-0 w-auto">
+                <MDBNavbarItem>
+                  <MDBNavbarLink href="/login">Login</MDBNavbarLink>
+                </MDBNavbarItem>
+              </MDBNavbarNav>
             )}
-          </ul>
-        </div>
-      </nav>
+          </MDBCollapse>
+        </MDBContainer>
+      </MDBNavbar>
 
-      {/* <div className="container-fluid mt-3 component "> */}
-      <div className="container-fluid mt-3">
-        <Routes>
-          <Route path="/" element={<AllProjects user={user} />} />
-          <Route path="/login" element={<Login login={login} user={user} />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/id/:id" element={<Task user={user} login={login} />} />
-          <Route
-            path="/project/:id"
-            element={<AllTasks user={user} login={login} />}
-          />
-
-          <Route
-            path="*"
-            element={
-              <main style={{ padding: "1rem" }}>
-                <p>There's nothing here!</p>
-              </main>
-            }
-          />
-        </Routes>
-      </div>
-    </div>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route
+          path="/projects"
+          element={<AllProjects user={user} userId={userId} />}
+        />
+        <Route
+          path="/login"
+          element={<Login user={user} login={login} setToken={setToken} />}
+        />
+        <Route path="/id/:id" element={<Task user={user} login={login} />} />
+        <Route
+          path="/project/:id"
+          element={<AllTasks user={user} login={login} />}
+        />
+        <Route
+          path="*"
+          element={
+            <main style={{ padding: "1rem" }}>
+              <h1>404</h1>
+            </main>
+          }
+        />
+        <Route
+          path="/profile"
+          element={<Profile user={user} userId={userId} />}
+        />
+      </Routes>
+    </MDBContainer>
   );
 }
 
