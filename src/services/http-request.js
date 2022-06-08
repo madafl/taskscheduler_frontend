@@ -14,23 +14,22 @@ class DataService {
   //http://localhost:5000/api/route/task?title=test&body=testbody&name=mada
   createTask(data) {
     const token = localStorage.getItem("token");
-
-    return http.post(
-      `/task?title=${data.title}&body=${data.body}&name=${data.name}&start=${data.start}&end=${data.end}&progress=${data.progress}&project_id=${data.project_id}`,
-      data,
-      { headers: { Authorization: `${JSON.parse(token)}` } }
-    );
+    console.log(data);
+    return http.post(`/task`, data, {
+      headers: { Authorization: `${JSON.parse(token)}` },
+    });
   }
   updateTask(data) {
-    return http.put(
-      `/task?title=${data.text}&task_id=${data.task_id}&name=${data.name}`,
-      data
-    );
+    const token = localStorage.getItem("token");
+    console.log(data);
+    return http.put(`/task?task_id=${data.id}`, data, {
+      headers: { Authorization: `${JSON.parse(token)}` },
+    });
   }
   deleteTask(data) {
     const token = localStorage.getItem("token");
     return http.delete(
-      `/task?task_id=${data.id}&name=${data.name}`,
+      `/task?task_id=${data.task_id}&project_id=${data.project_id}`,
       {
         headers: {
           Authorization: `${JSON.parse(token)}`,
@@ -39,6 +38,7 @@ class DataService {
       data
     );
   }
+
   updateDateProgressTask(data, updated_element) {
     const token = localStorage.getItem("token");
     return http.put(
@@ -68,7 +68,7 @@ class DataService {
   getUserById(id) {
     return http.get(`/user/${id}`);
   }
-
+  // PROJECTS
   getProjects() {
     const token = localStorage.getItem("token");
     return http.get("/projects", {
@@ -77,19 +77,15 @@ class DataService {
       },
     });
   }
-  // PROJECTS
-  // getProjectById(id) {
-  //   return http.get(`/project/${id}`);
-  // }
   createProject(data) {
-    return http.post(
-      `/project?name=${data.name}&start=${data.start}&end=${data.end}&progress=${data.progress}&type=${data.type}`,
-      data
-    );
-  }
-  editProject(data) {
     const token = localStorage.getItem("token");
-    return http.put(`/project?&project_id=${data.project_id}`, data, {
+    return http.post(`/project`, data, {
+      headers: { Authorization: `${JSON.parse(token)}` },
+    });
+  }
+  updateProject(data) {
+    const token = localStorage.getItem("token");
+    return http.put(`/project?&project_id=${data._id}`, data, {
       headers: {
         Authorization: `${JSON.parse(token)}`,
       },

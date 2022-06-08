@@ -13,15 +13,13 @@ import {
   MDBModalBody,
   MDBModalFooter,
   MDBInput,
-  MDBRange,
   MDBRadio,
   MDBIcon,
 } from "mdb-react-ui-kit";
-import diff from "deep-diff";
+// import diff from "deep-diff";
 
 //start end name id progress type hideChildren membri
 const EditProject = props => {
-  const initialProject = props.project;
   const [project, setProject] = useState(props.project); //project.members idurile emailurilor
   const [startDate, setStartDate] = useState(new Date(project.start));
   const [endDate, setEndDate] = useState(new Date(project.end));
@@ -33,14 +31,13 @@ const EditProject = props => {
   const [titleAlert, setTitleAlert] = useState("");
   const [quoteAlert, setQuoteAlert] = useState("");
   const [colorAlert, setColorAlert] = useState("");
-  const [members, setMembers] = useState([]);
-  // const [loading, setLoading] = useState(false);
-
+  const [members, setMembers] = useState([]); // emailuri membrii din proiect
+  ///get user email by id to display in chips
   useEffect(() => {
     project.members.map(id => {
       DataService.getUserById(id)
-        .then(res => {
-          setMembers(members => [...members, res.data]);
+        .then(response => {
+          setMembers(members => [...members, response.data]);
         })
         .catch(e => {
           console.log(e);
@@ -61,43 +58,36 @@ const EditProject = props => {
     const [start, end] = dates;
     setStartDate(start);
     setEndDate(end);
-    setProject({ ...project, dateRange: [start, end] });
+    setProject({ ...project, start: start, end: end });
   };
-  const editProject = () => {
-    console.log(emails);
-    var updated_values = diff(initialProject, project);
-    if (updated_values) {
-      var data;
-      updated_values.map(value => {
-        data = {
-          project_id: project._id,
-          ...data,
-          [value.path[0]]: value.rhs,
-          emails,
-        }; // project_id, lable: valoarea noua
-        return data;
-      });
-      console.log(data);
-      DataService.editProject(data)
-        .then(response => {
-          console.log(response);
-        })
-        .catch(e => {
+  // check if added email is project owner email already checked in email-chips
+  const updateProject = () => {
+    setProject({ ...project, members: members });
+    DataService.updateProject(project)
+      .then(response => {
+        if (response.status === 200) {
+          setQuoteAlert("Proiectul a fost actualizat!\n");
+          setColorAlert("#0CCA4A");
+          setStatusAlert(true);
+          setTitleAlert("Succes!");
+          setTypeAlert("success");
+        }
+      })
+      .catch(e => {
+        if (e.response.status === 418) {
+          setQuoteAlert(
+            "Emailul introdus este corect? \n" + e.response.data.error
+          );
+          setColorAlert("#D00000");
+          setStatusAlert(true);
+          setTitleAlert("Eroare!");
+          setTypeAlert("error");
+        } else {
           console.log(e.response);
-          if (e.response.status === 418) {
-            setQuoteAlert(
-              "Emailul introdus este corect? \n" + e.response.data.error
-            );
-            setColorAlert("#D00000");
-            setStatusAlert(true);
-            setTitleAlert("Eroare!");
-            setTypeAlert("error");
-          } else {
-            console.log(e.response);
-          }
-        });
-    }
+        }
+      });
   };
+
   const handleStatusChange = e => {
     setStatus(e.target.value);
     setProject({ ...project, status: e.target.value });
@@ -115,9 +105,9 @@ const EditProject = props => {
         <MDBModal show={basicModal} setShow={setBasicModal} tabIndex="-1">
           <MDBModalDialog size="md">
             <MDBModalContent>
-              <MDBModalHeader>
+              <MDBModalHeader className="modal-header-diy">
                 <MDBModalTitle className="m-1">
-                  Editeaza proiectul {project.name}
+                  Editeaza proiectul <b>{project.name}</b>
                 </MDBModalTitle>
                 <MDBBtn
                   className="btn-close"
@@ -125,11 +115,11 @@ const EditProject = props => {
                   onClick={toggleShow}
                 ></MDBBtn>
               </MDBModalHeader>
-              <MDBModalBody className="m-1">
+              <MDBModalBody>
                 <label>Titlu</label>
                 <div className="w-100">
                   <MDBInput
-                    className="w-100"
+                    className="w-100 mt-1"
                     id="name"
                     type="text"
                     name="name"
@@ -139,7 +129,7 @@ const EditProject = props => {
                 </div>
                 <label className="mt-2">Interval</label>
                 <DatePicker
-                  className="form-control"
+                  className="form-control mt-2"
                   selectsRange={true}
                   startDate={startDate}
                   endDate={endDate}
@@ -150,19 +140,9 @@ const EditProject = props => {
                   locale="ro"
                   withPortal
                 />
-                <label className="mt-2">{`Progres ${project.progress}%`}</label>
-                <MDBRange
-                  id="progress"
-                  name="progress"
-                  onChange={handleInputChange}
-                  min="0"
-                  max="100"
-                  step="5"
-                  defaultValue={project.progress}
-                />
-                <label>Tip</label>
+                <label className="mt-2">Tip</label>
                 <MDBInput
-                  className="demo-material-purple"
+                  className="mt-2"
                   label="Proiect"
                   id="type"
                   name="type"
@@ -203,14 +183,17 @@ const EditProject = props => {
                 <EmailChips
                   emails={members}
                   setEmails={setEmails}
+                  setProject={setProject}
+                  project={project}
                   current_user_email={props.user.email}
+                  setMembers={setMembers}
                 />
               </MDBModalBody>
               <MDBModalFooter>
                 <MDBBtn color="grey" onClick={toggleShow}>
                   Renunta
                 </MDBBtn>
-                <MDBBtn onClick={editProject}>Salveaza</MDBBtn>
+                <MDBBtn onClick={updateProject}>Salveaza</MDBBtn>
               </MDBModalFooter>
             </MDBModalContent>
           </MDBModalDialog>

@@ -52,7 +52,6 @@ const AllProjects = props => {
     };
     DataService.deleteProject(data)
       .then(response => {
-        // console.log(response);
         if (response.status === 200) {
           setProjects(projects.filter(p => p.id !== id));
           refreshProjects();
@@ -89,7 +88,6 @@ const AllProjects = props => {
 
   return (
     <>
-      {console.log(props)}
       {projects === [] ? (
         <div className="mt-2">
           <CreateProject user={props.user} refreshProjects={refreshProjects} />
@@ -102,7 +100,7 @@ const AllProjects = props => {
               refreshProjects={refreshProjects}
             />
             <select
-              className="form-select filter"
+              className="form-select filter mt-2 mb-2"
               defaultValue={"all"}
               onChange={handleChange}
             >
@@ -117,25 +115,30 @@ const AllProjects = props => {
 
           {projects.map((project, index) => (
             <MDBCol md="6" className="mt-2" key={index}>
-              <MDBCard>
-                {" "}
-                {/* {console.log(project.members)} */}
+              <MDBCard className="mt-2 me-2">
                 <MDBCardBody>
                   <MDBCardTitle>{project.name}</MDBCardTitle>
                   <MDBCardText>Text</MDBCardText>
                   <MDBProgress height="20">
-                    <MDBProgressBar width="25" valuemin={0} valuemax={100}>
-                      {project.progress}%
+                    <MDBProgressBar
+                      width={project.progress}
+                      valuemin={0}
+                      valuemax={100}
+                      {...(project.progress === 100
+                        ? { bgColor: "success" }
+                        : {})}
+                    >
+                      {Math.floor(project.progress)} %
                     </MDBProgressBar>
                   </MDBProgress>
                   <Link
                     to={`/project/${project._id}`}
+                    state={{ project: project }}
                     className="btn btn-primary mt-3 me-3"
                     key={project._id}
                   >
                     Deschide
                   </Link>
-
                   {project.project_owner_id === props.userId ? (
                     <>
                       <EditProject
@@ -152,7 +155,7 @@ const AllProjects = props => {
                       />
                       {openedModal === "modal" + project._id && basicModal ? (
                         <MDBModal
-                          show={basicModal} // true sau false
+                          show={basicModal}
                           setShow={setBasicModal}
                           tabIndex="-1"
                           id={"modal" + project._id}
@@ -176,6 +179,7 @@ const AllProjects = props => {
                               </MDBModalBody>
                               <MDBModalFooter>
                                 <MDBBtn
+                                  color="grey"
                                   onClick={() =>
                                     toggleShow("modal" + project._id)
                                   }

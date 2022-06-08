@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React from "react";
 import { MDBBtn } from "mdb-react-ui-kit";
 
 const TasksSettings = props => {
@@ -33,7 +33,7 @@ const TasksSettings = props => {
               <MDBBtn
                 className="m-1"
                 size="sm"
-                // onClick={() => props.editTask(task.id)}
+                onClick={() => props.handleEditTask(task)}
               >
                 Editeaza
               </MDBBtn>

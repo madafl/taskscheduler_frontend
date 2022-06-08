@@ -11,6 +11,7 @@ import LandingPage from "./components/landing-page";
 import Avatar from "react-avatar";
 import Profile from "./components/dashboard/profile";
 import {
+  MDBBtn,
   MDBContainer,
   MDBNavbar,
   MDBNavbarBrand,
@@ -80,11 +81,13 @@ function App() {
           </MDBNavbarToggler>
           <MDBCollapse navbar show={showBasic}>
             <MDBNavbarNav className="mr-auto mb-2 mb-lg-0">
-              <MDBNavbarItem>
-                <MDBNavbarLink active aria-current="page" href="/projects">
-                  Proiecte
-                </MDBNavbarLink>
-              </MDBNavbarItem>
+              {isLoggedIn ? (
+                <MDBNavbarItem>
+                  <MDBNavbarLink active aria-current="page" href="/projects">
+                    Proiecte
+                  </MDBNavbarLink>
+                </MDBNavbarItem>
+              ) : null}
             </MDBNavbarNav>
             {user.username !== "" ? (
               <MDBDropdown className="mr-auto mb-2 mb-lg-0 w-auto float-right">
@@ -125,14 +128,28 @@ function App() {
       </MDBNavbar>
 
       <Routes>
-        <Route path="/" element={<LandingPage />} />
+        {isLoggedIn ? (
+          <Route
+            path="/"
+            element={<AllProjects user={user} userId={userId} />}
+          />
+        ) : (
+          <Route path="/" element={<LandingPage />} />
+        )}
         <Route
           path="/projects"
           element={<AllProjects user={user} userId={userId} />}
         />
         <Route
           path="/login"
-          element={<Login user={user} login={login} setToken={setToken} />}
+          element={
+            <Login
+              user={user}
+              login={login}
+              setToken={setToken}
+              setUserId={setUserId}
+            />
+          }
         />
         <Route path="/id/:id" element={<Task user={user} login={login} />} />
         <Route
@@ -143,7 +160,16 @@ function App() {
           path="*"
           element={
             <main style={{ padding: "1rem" }}>
-              <h1>404</h1>
+              <section class="error_section">
+                <p class="error_section_subtitle">Pagina nu a fost gasita!</p>
+                <h1 class="error_title">
+                  <p>404</p>
+                  404
+                </h1>
+                <MDBBtn href={isLoggedIn ? "/projects" : "/"}>
+                  Task Scheduler
+                </MDBBtn>
+              </section>
             </main>
           }
         />

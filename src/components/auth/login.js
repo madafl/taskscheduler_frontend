@@ -12,6 +12,7 @@ import {
   MDBTypography,
 } from "mdb-react-ui-kit";
 import ReactJsAlert from "reactjs-alert";
+import { decodeToken } from "react-jwt";
 
 const Login = props => {
   let navigate = useNavigate();
@@ -62,9 +63,11 @@ const Login = props => {
         .then(response => {
           if (response.data.user) {
             const token = response.data.token;
+            const decodedToken = decodeToken(token);
             localStorage.setItem("token", JSON.stringify(token)); // id user
             localStorage.setItem("user", JSON.stringify(response.data.user)); // email si username
             props.login(response.data.user);
+            props.setUserId(decodedToken.token); // id-ul utilizatorului pt ca la redirect to /projects sa exite userid si sa apara butoanele de edit si delete
             navigate("/projects", { replace: true });
           }
         })

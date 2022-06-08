@@ -1,6 +1,7 @@
 body {
   height: 100vh;
   width: 100vw;
+  font-family: "Roboto", sans-serif;
 }
 
 .nav-link {
@@ -81,18 +82,27 @@ body {
   top: 0;
   width: 100%;
   height: 100%;
-  /* background: hsla(268, 54%, 21%, 1);
-  background: linear-gradient(45deg, #28143e 0%, #591a74 64%, #6f0f8a 98%); */
+  /* background: hsla(268, 54%, 21%, 1); */
+  /* background: linear-gradient(45deg, #28143e 0%, #591a74 64%, #6f0f8a 98%); */
   background: #0a0a4a;
   background: linear-gradient(
     17deg,
     rgba(10, 10, 74, 1) 0%,
     rgba(17, 17, 82, 1) 27%,
-    rgba(10, 40, 136, 1) 64%,
+    #0a2888 64%,
     rgba(19, 66, 188, 1) 83%,
     rgba(31, 100, 203, 1) 100%,
     rgba(13, 110, 253, 1) 100%
   );
+  /* background: rgb(24, 59, 117);
+  background: linear-gradient(
+    192deg,
+    rgba(24, 59, 117, 1) 0%,
+    rgba(24, 63, 127, 1) 39%,
+    rgba(19, 98, 161, 1) 60%,
+    rgba(21, 140, 201, 1) 79%,
+    rgba(21, 143, 204, 1) 100%
+  ); */
   box-shadow: -1px 0px 12px 0px #22222280;
 }
 .cont.s--signup .img:before {
@@ -239,7 +249,7 @@ body {
 .btn-primary,
 .form-check-input:checked,
 .form-switch .form-check-input:checked[type="checkbox"]:after {
-  background-color: #141466 !important;
+  background-color: #0a2888 !important;
 }
 .progress-bar {
   /* background-color: #622c7f91 !important; */
@@ -253,7 +263,7 @@ body {
 .form-control:focus,
 .nav-link.active,
 .form-check-input:checked {
-  border-color: #13293d !important;
+  border-color: #0a2888 !important;
 }
 .form-outline {
   width: 100%;
@@ -352,4 +362,108 @@ body {
 .carousel {
   border-radius: 5px !important;
   width: 80%;
+}
+
+/*  404 PAGE*/
+.error_section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 88vh;
+  background: linear-gradient(
+    17deg,
+    rgba(10, 10, 74, 1) 0%,
+    rgba(17, 17, 82, 1) 27%,
+    #0a2888 64%,
+    rgba(19, 66, 188, 1) 83%,
+    rgba(31, 100, 203, 1) 100%,
+    rgba(13, 110, 253, 1) 100%
+  );
+  box-shadow: -1px 0px 13px 4px rgb(0 0 0 / 28%);
+  border-radius: 5px;
+}
+.error_section_subtitle {
+  color: #25f193;
+  text-transform: uppercase;
+  letter-spacing: 5pt;
+  font-weight: 500;
+  font-size: 0.8rem;
+  margin-bottom: -5em;
+}
+.error_section .error_title {
+  --x-shadow: 0;
+  --y-shadow: 0;
+  --x: 50%;
+  --y: 50%;
+  font-size: 15rem;
+  transition: all 0.2s ease;
+  position: relative;
+  padding: 2rem;
+  color: #32c983 !important;
+}
+.error_section .error_title:hover {
+  transition: all 0.2s ease;
+  text-shadow: var(--x-shadow) var(--y-shadow) 10px #58ff0aad;
+}
+.error_section .error_title p {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  background-position: var(--x) var(--y);
+  background-repeat: no-repeat;
+  text-shadow: none;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transition: all 0.1s ease;
+  -webkit-text-stroke: 2px #5eec7e;
+  cursor: pointer;
+}
+
+.pagenotfound {
+  padding: 0.8em 1.5em;
+  border-radius: 99999px;
+  background-image: linear-gradient(to top, #32c983, #25f193) !important;
+  box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.2),
+    inset 0px -2px 5px 0px rgba(0, 0, 0, 0.2) !important;
+  border: none;
+  cursor: pointer;
+  text-shadow: 0px 1px #343434;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 1.5pt;
+  font-family: "Source Sans Pro", sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  transition: ease-out 0.2s all;
+}
+.pagenotfound:hover {
+  text-shadow: 0px 1px 1px #343434;
+  transform: translateY(-5px);
+  box-shadow: 0px 4px 15px 2px rgba(0, 0, 0, 0.1),
+    inset 0px -3px 7px 0px rgba(0, 0, 0, 0.2);
+  transition: ease-out 0.2s all;
+}
+
+/* .modal-header-diy {
+  background: linear-gradient(
+    17deg,
+    rgba(10, 10, 74, 1) 0%,
+    rgba(17, 17, 82, 1) 27%,
+    #0a2888 64%,
+    rgba(19, 66, 188, 1) 83%,
+    rgba(31, 100, 203, 1) 100%,
+    rgba(13, 110, 253, 1) 100%
+  );
+  color: white;
+} */
+.modal-body-diy {
+  /* box-shadow: -1px -2px 20px 11px rgb(159 159 160 / 25%);
+  width: 94%;
+  border-radius: 5px;
+  align-self: center; */
+}
+.fa-trash-alt,
+.fa-edit {
+  cursor: pointer;
 }

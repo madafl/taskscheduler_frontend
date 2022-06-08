@@ -5,7 +5,7 @@ export default class EmailChips extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      items: props.emails,
+      items: props.emails, // adrese email in this.state.items => toate valorile
       value: "",
       error: null,
     };
@@ -48,6 +48,7 @@ export default class EmailChips extends React.Component {
       items: this.state.items.filter(i => i !== item),
     });
     this.props.setEmails(this.state.items);
+    this.props.setMembers(this.state.items);
   };
 
   isValid(email) {
@@ -69,8 +70,6 @@ export default class EmailChips extends React.Component {
   }
 
   isInList(email) {
-    // console.log(this.props.emails.includes(this.props.current_user_email));
-    //return this.props.emails.includes(email);
     return this.state.items.includes(email);
   }
 
@@ -78,12 +77,16 @@ export default class EmailChips extends React.Component {
     return /[\w\d\.-]+@[\w\d\.-]+\.[\w\d\.-]+/.test(email);
   }
   handleMouseLeave = () => {
-    this.props.setEmails(this.state.items);
+    this.props.setProject({
+      ...this.props.project,
+      members: this.state.items,
+    });
+    this.props.setMembers(this.state.items);
   };
 
   render() {
     return (
-      <div className="mt-1">
+      <div className="mt-2">
         {this.state.items.map(item => (
           <div className="tag-item mt-1 mb-4" key={item}>
             {item}

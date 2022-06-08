@@ -5,11 +5,14 @@ import { Gantt, ViewMode } from "gantt-task-react";
 import "gantt-task-react/dist/index.css";
 import AddTask from "./add-task";
 import TasksSettings from "./tasks-settings";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
+import ReactJsAlert from "reactjs-alert";
+import EditProject from "../project/edit-project";
+import EditTask from "./edit-task";
 
 const AllTasks = props => {
-  const { id } = useParams(); //idul proiectului
-
+  const { id } = useParams(); //id-ul proiectului
+  const location = useLocation(); // folosit pentru a obtine date start si date end din proiect
   const [tasks, setTasks] = useState([]); // toate taskurile proiectului
   const [project, setProject] = useState([]); // proiectul
   const [view, setView] = React.useState(ViewMode.Day); // modul de vizualizare al taskurilor (day, week, month)
@@ -17,6 +20,15 @@ const AllTasks = props => {
   const [showEditDeletePopup, setShowEditDeletePopup] = useState(false); // afisare popup la dubluClick pe task
   const [task, setTask] = useState({}); // taskul selectat
   const [showGantt, setShowGantt] = useState(false); // afisare gantt
+  const [editing, setEditing] = useState(false); // editare task
+
+  // Alerta
+  const [statusAlert, setStatusAlert] = useState(false);
+  const [typeAlert, setTypeAlert] = useState("error");
+  const [titleAlert, setTitleAlert] = useState("");
+  const [quoteAlert, setQuoteAlert] = useState("");
+  const [colorAlert, setColorAlert] = useState("");
+
   const [clickedElement, setClickedElement] = useState(""); // elementul selectat
   const [clickedElementPosition, setClickedElementPosition] = useState({
     // pozitia elementului selectat
@@ -48,34 +60,52 @@ const AllTasks = props => {
               type: pr.type,
               progress: Number(pr.progress),
               hideChildren: false,
+              styles: {
+                progressColor: "#16db93",
+                progressSelectedColor: "#12C281",
+              },
             };
             setProject(newProject);
             return tasks.push(newProject);
           });
 
           response.data[1].map(task => {
-            const newTask = {
-              start: new Date(task.start),
-              end: new Date(task.end),
-              name: task.name,
-              id: task._id,
-              type: task.type, // project, milestone, task
-              progress: Number(task.progress),
-              // styles: {
-              //   backgroundColor: task.backgroundColor,
-              //   backgroundSelectedColor: task.backgroundColor,
-              //   progressColor: task.progressColor,
-              //   progressSelectedColor: task.progressColor,
-              // },
-              // isDisabled: false, //cant be modified
-              // project: project, // proiectul de care apartine?
-              // dependencies:[],
-              // hideChildren: false,
-              // displayOrder: 2,
-            };
-            return tasks.push(newTask);
+            if (task.type === "task") {
+              const newTask = {
+                start: new Date(task.start),
+                end: new Date(task.end),
+                name: task.name,
+                description: task.description,
+                id: task._id,
+                type: task.type,
+                status: task.status,
+                progress: Number(task.progress),
+                styles: {
+                  backgroundColor: "#DCDCDC",
+                  backgroundSelectedColor: "#c9c9c9",
+                  progressColor: "#16db93",
+                  progressSelectedColor: "#12C281",
+                },
+                project: id,
+                dependencies: task.dependencies,
+              };
+              return tasks.push(newTask);
+            } else {
+              const newTask = {
+                start: new Date(task.start),
+                end: new Date(task.end),
+                name: task.name,
+                description: task.description,
+                id: task._id,
+                type: task.type,
+                status: task.status,
+                progress: Number(task.progress),
+                project: id,
+                dependencies: task.dependencies,
+              };
+              return tasks.push(newTask);
+            }
           });
-
           setShowGantt(true);
         }
       })
@@ -83,9 +113,27 @@ const AllTasks = props => {
         console.log(e);
       });
   };
+  // afiseaza taskurile proiectului sau nu
+  const handleExpanderClick = task => {
+    setTasks(tasks.map(t => (t.id === task.id ? task : t)));
+  };
+  // modificarea datestart sau datened a taskului
   const handleTaskChange = task => {
-    let newTasks = tasks.map(t => {
-      if (t.id === task.id) {
+    if (task.project) {
+      const [start, end] = [task.start, task.end];
+      if (
+        project.start.getTime() > start.getTime() ||
+        project.end.getTime() < end.getTime()
+      ) {
+        setTitleAlert("Eroare");
+        setQuoteAlert(
+          "Taskul nu poate fi plasat in afara perioadei de desfasurare a proiectului!"
+        );
+        setColorAlert("#D00000");
+        setTypeAlert("error");
+        setStatusAlert(true);
+      } else {
+        let newTasks = tasks.map(t => (t.id === task.id ? task : t));
         const data = {
           task_id: task.id,
           start: task.start,
@@ -100,11 +148,9 @@ const AllTasks = props => {
           .catch(e => {
             console.log(e);
           });
-        return task;
-      } else {
-        return t;
+        setTasks(newTasks);
       }
-    });
+    }
   };
   const handleProgressChange = task => {
     let newTasks = tasks.map(t => {
@@ -112,9 +158,11 @@ const AllTasks = props => {
         const data = {
           task_id: task.id,
           progress: task.progress,
+          project_id: project.id,
         };
         DataService.updateDateProgressTask(data, "progress")
           .then(response => {
+            console.log(response);
             if (response.data.status === 200) {
               setTasks(newTasks);
             }
@@ -137,16 +185,20 @@ const AllTasks = props => {
   }, []);
 
   const handleTaskDelete = task => {
-    var data = {
-      id: task.id,
-      name: props.user.username,
+    const data = {
+      task_id: task.id,
+      project_id: project.id,
     };
     DataService.deleteTask(data)
       .then(response => {
         setShowEditDeletePopup(false);
         if (response.status === 200) {
           setTasks(tasks.filter(t => t.id !== task.id));
-          alert("Taskul a fost sters cu succes!");
+          setTitleAlert("Succes");
+          setQuoteAlert("Taskul a fost sters cu succes!");
+          setTypeAlert("success");
+          setStatusAlert(true);
+          setColorAlert("#0CCA4A");
         }
       })
       .catch(e => {
@@ -157,10 +209,10 @@ const AllTasks = props => {
         }
       });
   };
+  const handleEditTask = task => {
+    setEditing(!editing);
+  };
 
-  // const handleProgressChange = task => {
-  //   setTasks(tasks.map(t => (t.id === task.id ? task : t)));
-  // };
   const handleDoubleClick = task => {
     setTask(task);
     setShowEditDeletePopup(!showEditDeletePopup);
@@ -226,11 +278,31 @@ const AllTasks = props => {
                 listCellWidth={isChecked ? "155px" : ""}
                 onDoubleClick={handleDoubleClick}
                 columnWidth={columnWidth}
+                onExpanderClick={handleExpanderClick}
               />
-              <AddTask user={props.user} projectId={id} />
+              <AddTask
+                user={props.user} // pt user id la post
+                minStartDate={location.state.project.start} // data de inceput a proiectului pt datepicker
+                maxEndDate={location.state.project.end} // data de sfarsit a proiectului pt datepicker
+                project={project} // poriectul - id pt deepndent tasks si nume pt afisare
+              />
+              <EditTask
+                user={props.user}
+                minStartDate={location.state.project.start}
+                maxEndDate={location.state.project.end}
+                editing={editing}
+                setEditing={setEditing}
+                task={task}
+                project={project}
+              />
             </div>
           ) : (
-            <AddTask user={props.user} projectId={id} />
+            <AddTask
+              user={props.user}
+              minStartDate={location.state.project.start}
+              maxEndDate={location.state.project.end}
+              project={project}
+            />
           )}
           {showEditDeletePopup ? (
             <TasksSettings
@@ -239,8 +311,18 @@ const AllTasks = props => {
               clickedElementPosition={clickedElementPosition}
               clickedElement={clickedElement}
               handleTaskDelete={handleTaskDelete}
+              handleEditTask={handleEditTask}
             />
           ) : null}
+          <ReactJsAlert
+            status={statusAlert}
+            type={typeAlert}
+            title={titleAlert}
+            color={colorAlert}
+            quotes={true}
+            quote={quoteAlert}
+            Close={() => setStatusAlert(false)}
+          />
         </div>
       </div>
     </div>

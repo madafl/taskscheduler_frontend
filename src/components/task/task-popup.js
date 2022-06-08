@@ -1,10 +1,11 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
+import Select from "react-select";
 import DatePicker from "react-datepicker";
 import { registerLocale } from "react-datepicker";
 import { ro } from "date-fns/locale";
 import "react-datepicker/dist/react-datepicker.css";
-import { SketchPicker, ChromePicker } from "react-color";
-
+import DataService from "../../services/http-request";
+import ReactJsAlert from "reactjs-alert";
 import {
   MDBBtn,
   MDBModal,
@@ -25,77 +26,173 @@ import {
   MDBPopover,
   MDBPopoverBody,
   MDBPopoverHeader,
+  MDBIcon,
 } from "mdb-react-ui-kit";
-
 registerLocale("ro", ro);
-//TODO : ADD PROJECT TO TASK
-const TaskPopup = props => {
-  // const [backgroundColor, setBackgroundColor] = useState("#AEB8C2");
-  // const [backgroundSelectedColor, setBackgroundSelectedColor] = useState("");
-  // const [progressColor, setProgressColor] = useState("#8282F5");
-  const [displayBgColorPicker, setDisplayBgColorPicker] = useState(false);
-  const [displayPgColorPicker, setDisplayPgColorPicker] = useState(false);
-  // const [editorState, setEditorState] = useState(EditorState.createEmpty());
-  // const [progressSelectedColor, setProgressSelectedColor] = useState("");
-  const [edit, setEdit] = useState(false);
-  const [basicModal, setBasicModal] = useState(false);
-  const [fillActive, setFillActive] = useState("tab1");
 
+const TaskPopup = props => {
+  const [fillActive, setFillActive] = useState("tab1"); // taburi
   const handleFillClick = value => {
     if (value === fillActive) {
       return;
     }
-
     setFillActive(value);
   };
 
-  const toggleShow = () => setBasicModal(!basicModal);
-  const popoverRef = useRef();
+  const [task, setTask] = useState(props.task);
+  const [dependentTasks, setDependentTasks] = useState([]);
+  const [dependencies, setDependencies] = useState([]);
 
+  const [startDate, setStartDate] = useState(new Date()); //
+  const [endDate, setEndDate] = useState(new Date()); //
+
+  const [statusAlert, setStatusAlert] = useState(false);
+  const [typeAlert, setTypeAlert] = useState("error");
+  const [titleAlert, setTitleAlert] = useState("");
+  const [quoteAlert, setQuoteAlert] = useState("");
+  const [colorAlert, setColorAlert] = useState("");
+
+  const retrieveDependentTasks = () => {
+    DataService.getTasksByProjectId(props.project_id)
+      .then(response => {
+        response.data[1].map(task => {
+          const newTask = {
+            label: task.name,
+            value: task._id,
+          };
+          return dependentTasks.push(newTask);
+        });
+      })
+      .catch(e => {
+        console.log(e);
+      });
+  };
+  useEffect(() => {
+    setTask(props.task);
+    if (props.project_id && dependentTasks.length === 0) {
+      retrieveDependentTasks();
+    }
+  }, [props.task]);
+
+  const handleInputChange = event => {
+    const value = event.target.value;
+    setTask({ ...task, [event.target.name]: value });
+  };
   const onChange = dates => {
     const [start, end] = dates;
-    props.setStartDate(start);
-    props.setEndDate(end);
-  };
-  const handleBgClick = () => {
-    setDisplayBgColorPicker(!displayBgColorPicker);
-  };
-  const handlePgClick = () => {
-    setDisplayPgColorPicker(!displayPgColorPicker);
-  };
-  const handleBgClose = () => {
-    setDisplayBgColorPicker(false);
-  };
-  const handlePgClose = () => {
-    setDisplayPgColorPicker(false);
+    setStartDate(start);
+    setEndDate(end);
   };
 
-  // const handleEditorStateChange = editorState => {
-  //   const currentContent = editorState.getCurrentContent();
-  //   const contentRaw = convertToRaw(currentContent);
-  //   const value = draftToHtml(contentRaw);
-  //   //setEditorState(value)
-  // };
+  const saveTask = () => {
+    if (props.editing) {
+      var data = {};
+
+      if (task.type === "task") {
+        data = {
+          id: task.id,
+          name: task.name,
+          description: task.description,
+          start: startDate,
+          end: endDate,
+          progress: task.progress,
+          type: task.type,
+          dependencies: dependencies,
+          backgroundColor: task.backgroundColor,
+          progressColor: task.progressColor,
+          project_id: props.project_id,
+        };
+      } else {
+        data = {
+          id: task.id,
+          name: task.name,
+          description: task.description,
+          start: startDate,
+          end: startDate,
+          progress: task.progress,
+          type: task.type,
+          dependencies: dependencies,
+          project_id: props.project_id,
+        };
+      }
+
+      DataService.updateTask(data)
+        .then(response => {
+          if (response.status === 200) {
+            setQuoteAlert("Taskul a fost actualizat!\n");
+            setColorAlert("#0CCA4A");
+            setStatusAlert(true);
+            setTitleAlert("Succes!");
+            setTypeAlert("success");
+          }
+          setTimeout(window.location.reload(false), 3000);
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    } else {
+      const data = {
+        name: task.name,
+        description: task.description,
+        start: startDate,
+        end: endDate,
+        progress: task.progress,
+        type: task.type,
+        dependencies: dependencies,
+        backgroundColor: task.backgroundColor,
+        progressColor: task.progressColor,
+        project_id: props.project_id,
+      };
+      console.log(data);
+      DataService.createTask(data)
+        .then(response => {
+          if (response.status === 200) {
+            setQuoteAlert("Taskul a fost creat cu succes!\n");
+            setColorAlert("#0CCA4A");
+            setStatusAlert(true);
+            setTitleAlert("Succes!");
+            setTypeAlert("success");
+          }
+
+          setTimeout(window.location.reload(false), 3000);
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    }
+  };
+  const handleDependenciesChange = selectedOption => {
+    const array = [];
+    selectedOption.map(option => {
+      array.push(option.value);
+    });
+    setDependencies(array);
+    console.log(dependencies);
+  };
 
   return (
     <div>
-      <MDBBtn onClick={toggleShow} className="mt-3">
-        Adauga
-      </MDBBtn>
-      <MDBModal show={basicModal} setShow={setBasicModal} tabIndex="-1">
+      {console.log(props)}
+      <MDBModal
+        show={props.basicModal}
+        setShow={props.setBasicModal}
+        tabIndex="-1"
+      >
         <MDBModalDialog size="xl">
           <MDBModalContent>
-            <MDBModalHeader>
-              {edit ? (
-                <MDBModalTitle>Editeaza</MDBModalTitle>
+            <MDBModalHeader className="modal-header-diy">
+              {props.editing ? (
+                <MDBModalTitle>
+                  Editeaza taskul <b>{task.name}</b>
+                </MDBModalTitle>
               ) : (
-                <MDBModalTitle>Adauga</MDBModalTitle>
+                <MDBModalTitle>Adauga un task</MDBModalTitle>
               )}
 
               <MDBBtn
                 className="btn-close"
                 color="none"
-                onClick={toggleShow}
+                onClick={props.toggleShow}
               ></MDBBtn>
             </MDBModalHeader>
             <MDBModalBody>
@@ -124,80 +221,38 @@ const TaskPopup = props => {
                     Caracteristici
                   </MDBTabsLink>
                 </MDBTabsItem>
-                <MDBTabsItem>
-                  <MDBTabsLink
-                    onClick={() => handleFillClick("tab4")}
-                    active={fillActive === "tab4"}
-                  >
-                    Aspect
-                  </MDBTabsLink>
-                </MDBTabsItem>
               </MDBTabs>
-
               <MDBTabsContent>
                 <MDBTabsPane show={fillActive === "tab1"}>
                   <label>Titlu</label>
                   <MDBInput
-                    id="title"
-                    aria-describedby="title"
-                    onChange={props.handleInputChange}
-                    name="title"
+                    id="name"
+                    aria-describedby="name"
+                    onChange={handleInputChange}
+                    name="name"
+                    value={task.name}
                   />
-                  {/* {edit ? (
-                    // <Editor
-                    //   editorState={editorState}
-                    //   onEditorStateChange={handleEditorStateChange}
-                    // />
-                  ) : ( */}
                   <div>
                     <label>Descriere</label>
                     <MDBTextArea
                       name="description"
                       rows={4}
-                      onChange={props.handleInputChange}
+                      value={task.description}
+                      onChange={handleInputChange}
                     />
                   </div>
-                  {/* // )} */}
                 </MDBTabsPane>
                 <MDBTabsPane show={fillActive === "tab2"}>
-                  <label>Interval</label>
-                  <DatePicker
-                    className="form-control mt-1"
-                    selectsRange={true}
-                    startDate={props.startDate}
-                    endDate={props.endDate}
-                    onChange={onChange}
-                    dateFormat="d MMMM yyyy "
-                    shouldCloseOnSelect={false}
-                    name="dateRange"
-                    locale="ro"
-                    withPortal
-                  />
-                  <label className="mt-3">Progres {props.task.progress}%</label>
-                  <MDBRange
-                    id="progress"
-                    min="0"
-                    max="100"
-                    name="progress"
-                    step="5"
-                    onChange={props.handleInputChange}
-                    value={props.task.progress}
-                  />
-                </MDBTabsPane>
-                <MDBTabsPane show={fillActive === "tab3"}>
                   <div>
-                    <label className="mx-3">Tip</label>
+                    <label className="me-2">Tip</label>
                     <MDBPopover
-                      btnChildren="Ajutor"
+                      btnChildren={<MDBIcon icon="info-circle " size="lg" />}
                       dismiss
                       placement="right"
                       size="sm"
                     >
                       <MDBPopoverHeader>Ajutor</MDBPopoverHeader>
                       <MDBPopoverBody>
-                        <p className="help">
-                          <b>Proiect</b> - Grup de activitati.
-                        </p>
                         <p className="help">
                           <b>Task</b> - Activitate derulata in timpul
                           proiectului.
@@ -210,43 +265,67 @@ const TaskPopup = props => {
                         </p>
                       </MDBPopoverBody>
                     </MDBPopover>
-                  </div>
-                  <div>
                     <select
                       className="form-control mt-3"
                       id="type"
                       name="type"
-                      onChange={props.handleInputChange}
-                      defaultValue="task"
+                      onChange={handleInputChange}
+                      defaultValue={props.editing ? task.type : "task"}
                     >
-                      <option value="project" disabled>
-                        Proiect
-                      </option>
                       <option value="task">Task</option>
                       <option value="milestone">Reper</option>
                     </select>
+
+                    <div className="mt-2 me-3"></div>
                   </div>
-                  <label className="form-label">Status</label>
-                  <select
-                    className="form-control"
-                    id="status"
-                    name="status"
-                    onChange={props.handleInputChange}
-                  >
-                    <option value="todo">In asteptare</option>
-                    <option value="doing">In lucru</option>
-                    <option value="Done">Finalizat</option>
-                  </select>
+                  <label className="mt-3">Interval</label>
+                  {task.type === "task" ? (
+                    <DatePicker
+                      className="form-control mt-2"
+                      selectsRange={true}
+                      startDate={startDate}
+                      endDate={endDate}
+                      onChange={onChange}
+                      dateFormat="d MMMM yyyy "
+                      shouldCloseOnSelect={false}
+                      name="dateRange"
+                      locale="ro"
+                      withPortal
+                      minDate={new Date(props.minStartDate)}
+                      maxDate={new Date(props.maxEndDate)}
+                    />
+                  ) : (
+                    <DatePicker
+                      className="form-control mt-2"
+                      dateFormat="d MMMM yyyy "
+                      selected={startDate}
+                      onChange={date => setStartDate(date)}
+                      withPortal
+                    />
+                  )}
+
+                  <label className="mt-3">Progres {task.progress} %</label>
+                  <MDBRange
+                    id="progress"
+                    min="0"
+                    max="100"
+                    name="progress"
+                    step="5"
+                    onChange={handleInputChange}
+                    value={task.progress}
+                  />
+                </MDBTabsPane>
+                <MDBTabsPane show={fillActive === "tab3"}>
                   <label className="form-label"> Depinde de: </label>
-                  <select
-                    className="form-control"
-                    id="dependencies"
-                    name="dependencies"
-                    onChange={props.handleInputChange}
-                  >
-                    <option value=""></option>
-                    <option value="Task 0">Task 0</option>
-                  </select>
+                  <Select
+                    isMulti
+                    name="colors"
+                    options={dependentTasks}
+                    className="basic-multi-select"
+                    classNamePrefix="select"
+                    onChange={handleDependenciesChange}
+                  />
+
                   <label className="form-label">Proiect</label>
                   <select
                     className="form-select"
@@ -254,73 +333,37 @@ const TaskPopup = props => {
                     disabled
                     defaultValue={1}
                   >
-                    {/* PUT PROJECT NAME HERE */}
-                    <option value="1">{props.task.projectId}</option>
+                    <option value="1">{props.project_name}</option>
                   </select>
-                </MDBTabsPane>
-                <MDBTabsPane show={fillActive === "tab4"}>
-                  <div>
-                    <p>Selecteaza o culoare de fundal</p>
-                    <div className="swatch" onClick={handleBgClick}>
-                      <div
-                        className="bgcolor"
-                        style={{
-                          backgroundColor: props.task.backgroundColor,
-                        }}
-                      />
-                    </div>
-                    {displayBgColorPicker ? (
-                      <div className="popoverColorPicker">
-                        <div className="cover" onClick={handleBgClose} />
-                        <SketchPicker
-                          color={props.task.backgroundColor}
-                          onChange={props.handleBackgroundChange}
-                        />
-                      </div>
-                    ) : null}
-                    <p>
-                      Selecteaza o culoare pentru a indica progresul taskului
-                    </p>
-                    <div className="swatch" onClick={handlePgClick}>
-                      <div
-                        className="progresscolor"
-                        style={{
-                          backgroundColor: props.task.progressColor,
-                        }}
-                      />
-                    </div>
-                    {displayPgColorPicker ? (
-                      <div className="popoverColorPicker">
-                        <div className="cover" onClick={handlePgClose} />
-                        <SketchPicker
-                          color={props.task.progressColor}
-                          onChange={props.handleProgressChange}
-                        />
-                      </div>
-                    ) : null}
-                  </div>
                 </MDBTabsPane>
               </MDBTabsContent>
             </MDBModalBody>
 
             <MDBModalFooter>
-              <MDBBtn color="danger" onClick={toggleShow}>
+              <MDBBtn color="danger" onClick={props.toggleShow}>
                 Renunta
               </MDBBtn>
-              {props.task.title !== "" ? (
-                <MDBBtn onClick={props.saveTask}>Adauga</MDBBtn>
+              {task.name !== "" ? (
+                <MDBBtn onClick={saveTask}>Adauga</MDBBtn>
               ) : (
-                <MDBBtn onClick={props.saveTask} disabled>
+                <MDBBtn onClick={saveTask} disabled>
                   Adauga
                 </MDBBtn>
               )}
-              {/* {props.submitted ? (
-                <h4>Taskul a fost adaugat cu succes!</h4>
-              ) : null} */}
+              {/* <MDBBtn onClick={saveTask}>Adauga</MDBBtn> */}
             </MDBModalFooter>
           </MDBModalContent>
         </MDBModalDialog>
       </MDBModal>
+      <ReactJsAlert
+        status={statusAlert}
+        type={typeAlert}
+        title={titleAlert}
+        color={colorAlert}
+        quotes={true}
+        quote={quoteAlert}
+        Close={() => setStatusAlert(false)}
+      />
     </div>
   );
 };
