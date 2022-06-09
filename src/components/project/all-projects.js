@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import CreateProject from "./create-project";
 import DataService from "../../services/http-request";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import EditProject from "./edit-project";
+import Graphs from "./graphs";
 import {
   MDBRow,
   MDBCol,
@@ -85,6 +86,11 @@ const AllProjects = props => {
       find(e.target.value);
     }
   };
+  let navigate = useNavigate();
+  const routeChange = () => {
+    let path = `/graphs`;
+    navigate(path);
+  };
 
   return (
     <>
@@ -138,6 +144,13 @@ const AllProjects = props => {
                     key={project._id}
                   >
                     Deschide
+                  </Link>
+                  <Link
+                    to={`/graphs/${project._id}`}
+                    className="position-absolute top-0 end-0 mt-3"
+                    state={{ project: project }}
+                  >
+                    <MDBIcon fas icon="chart-pie fa-lg mt-2 chart-pie" />
                   </Link>
                   {project.project_owner_id === props.userId ? (
                     <>

@@ -6,7 +6,7 @@ import { MDBBtn, MDBBtnGroup, MDBSwitch } from "mdb-react-ui-kit";
 const ChangeViewMode = ({ onViewModeChange, onViewListChange, isChecked }) => {
   return (
     <>
-      <MDBBtnGroup className="mt-3" aria-label="Basic example">
+      <MDBBtnGroup className="mt-3">
         <MDBBtn onClick={() => onViewModeChange(ViewMode.Hour)}>Ora</MDBBtn>
         <MDBBtn onClick={() => onViewModeChange(ViewMode.QuarterDay)}>
           Sfert de zi

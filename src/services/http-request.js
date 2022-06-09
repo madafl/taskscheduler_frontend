@@ -111,5 +111,13 @@ class DataService {
       },
     });
   }
+  groupTasksByMember(id) {
+    const token = localStorage.getItem("token");
+    return http.get(`/project/members/${id}`, {
+      headers: {
+        Authorization: `${JSON.parse(token)}`,
+      },
+    });
+  }
 }
 export default new DataService();

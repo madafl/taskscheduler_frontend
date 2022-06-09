@@ -71,6 +71,7 @@ const EditProject = props => {
           setStatusAlert(true);
           setTitleAlert("Succes!");
           setTypeAlert("success");
+          setTimeout(window.location.reload(false), 3000);
         }
       })
       .catch(e => {

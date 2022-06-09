@@ -172,7 +172,6 @@ const TaskPopup = props => {
 
   return (
     <div>
-      {console.log(props)}
       <MDBModal
         show={props.basicModal}
         setShow={props.setBasicModal}
@@ -231,14 +230,16 @@ const TaskPopup = props => {
                     onChange={handleInputChange}
                     name="name"
                     value={task.name}
+                    className="mt-1"
                   />
                   <div>
-                    <label>Descriere</label>
+                    <label className="mt-2">Descriere</label>
                     <MDBTextArea
                       name="description"
                       rows={4}
                       value={task.description}
                       onChange={handleInputChange}
+                      className="mt-1"
                     />
                   </div>
                 </MDBTabsPane>
@@ -326,7 +327,7 @@ const TaskPopup = props => {
                     onChange={handleDependenciesChange}
                   />
 
-                  <label className="form-label">Proiect</label>
+                  <label className="form-label mt-2">Proiect</label>
                   <select
                     className="form-select"
                     aria-label="Disabled select example"

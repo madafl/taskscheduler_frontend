@@ -74,7 +74,7 @@ export default class EmailChips extends React.Component {
   }
 
   isEmail(email) {
-    return /[\w\d\.-]+@[\w\d\.-]+\.[\w\d\.-]+/.test(email);
+    return /[\w\d.-]+@[\w\d.-]+\.[\w\d.-]+/.test(email);
   }
   handleMouseLeave = () => {
     this.props.setProject({

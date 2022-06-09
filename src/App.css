@@ -250,6 +250,7 @@ body {
 .form-check-input:checked,
 .form-switch .form-check-input:checked[type="checkbox"]:after {
   background-color: #0a2888 !important;
+  color: white !important;
 }
 .progress-bar {
   /* background-color: #622c7f91 !important; */
@@ -276,19 +277,6 @@ body {
 .fas-trash-alt {
   cursor: pointer;
 }
-
-/* .input {
-  width: 100%;
-  height: 45px;
-  padding: 0 1rem;
-  margin-top: 1rem;
-  box-sizing: border-box;
-  font: inherit;
-  border-radius: 0.2rem;
-  border: 2px solid #d4d5d6;
-  color: #565656;
-  -webkit-appearance: none;
-} */
 
 .input:focus {
   border-color: cornflowerblue;
@@ -466,4 +454,20 @@ body {
 .fa-trash-alt,
 .fa-edit {
   cursor: pointer;
+}
+.profile-tabs {
+  background-color: #0a0a4a !important;
+  color: rgb(255, 255, 255) !important;
+}
+.profile-tabs.active {
+  background-color: #0cca4a !important;
+}
+
+.chart-pie {
+  margin-right: 4.2rem !important;
+  color: #4f4f4f !important;
+}
+
+.display-graphs {
+  width: 50%;
 }

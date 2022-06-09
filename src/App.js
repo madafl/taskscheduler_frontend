@@ -10,6 +10,7 @@ import AllProjects from "./components/project/all-projects";
 import LandingPage from "./components/landing-page";
 import Avatar from "react-avatar";
 import Profile from "./components/dashboard/profile";
+import Graphs from "./components/project/graphs";
 import {
   MDBBtn,
   MDBContainer,
@@ -107,12 +108,12 @@ function App() {
                 </MDBDropdownToggle>
                 <MDBDropdownMenu>
                   <MDBDropdownItem>
+                    <MDBDropdownLink href="/profile">Profil</MDBDropdownLink>
+                  </MDBDropdownItem>
+                  <MDBDropdownItem>
                     <MDBDropdownLink onClick={logout} href="/">
                       Logout
                     </MDBDropdownLink>
-                  </MDBDropdownItem>
-                  <MDBDropdownItem>
-                    <MDBDropdownLink href="/profile">Profil</MDBDropdownLink>
                   </MDBDropdownItem>
                 </MDBDropdownMenu>
               </MDBDropdown>
@@ -176,6 +177,10 @@ function App() {
         <Route
           path="/profile"
           element={<Profile user={user} userId={userId} />}
+        />
+        <Route
+          path="/graphs/:id"
+          element={<Graphs user={user} userId={userId} />}
         />
       </Routes>
     </MDBContainer>

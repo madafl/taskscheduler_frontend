@@ -68,7 +68,7 @@ const CreateProject = props => {
       emails: emails,
       status: status,
     };
-
+    console.log(project);
     DataService.createProject(data)
       .then(response => {
         console.log(response);
@@ -129,7 +129,7 @@ const CreateProject = props => {
                     label="Adauga un titlu"
                   />
                 </div>
-                <label className="mt-1">Interval</label>
+                <label className="mt-2">Interval</label>
                 <DatePicker
                   className="form-control mt-1"
                   selectsRange={true}
@@ -138,11 +138,10 @@ const CreateProject = props => {
                   onChange={onChange}
                   dateFormat="d MMMM yyyy "
                   shouldCloseOnSelect={false}
-                  // name="dateRange"
                   locale="ro"
                   withPortal
                 />
-                <label>Tip</label>
+                <label className="mt-2">Tip</label>
                 <MDBInput
                   className="mt-1"
                   label="Proiect"
@@ -195,7 +194,6 @@ const CreateProject = props => {
               <MDBBtn color="grey" onClick={toggleShow}>
                 Renunta
               </MDBBtn>
-              {console.log(project.name)}
               {project.name !== "" ? (
                 <MDBBtn onClick={saveProject}>Creeaza proiect</MDBBtn>
               ) : (

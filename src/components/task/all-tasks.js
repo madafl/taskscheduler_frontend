@@ -7,7 +7,6 @@ import AddTask from "./add-task";
 import TasksSettings from "./tasks-settings";
 import { useParams, useLocation } from "react-router-dom";
 import ReactJsAlert from "reactjs-alert";
-import EditProject from "../project/edit-project";
 import EditTask from "./edit-task";
 
 const AllTasks = props => {
