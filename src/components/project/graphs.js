@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import DataService from "../../services/http-request.js";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
   MDBCard,
   MDBCardBody,
-  MDBContainer,
   MDBRow,
   MDBCardTitle,
   MDBCardText,
@@ -31,21 +30,14 @@ ChartJS.register(
   Legend
 );
 
-// taskuri todo, doing done
-// if task.progress = 0 => todo
-// else if task.progress > 0 && task.progress <100  => doing
-// else if task.progress = 100 => done
-// get all task from project
-
-const Graphs = props => {
-  const location = useLocation(); // folosit pentru a obtine date start si date end din proiect
+const Graphs = () => {
   const { id } = useParams(); //id-ul proiectului
   const [tasks, setTasks] = useState([]); // toate taskurile proiectului
-  const [project, setProject] = useState(location.state.projece); // proiectul
   const labels_by_status = ["In lucru", "In asteptare", "Finalizat"];
   const [tasks_by_status, set_tasks_by_status] = useState([]);
   const [labels_by_member, set_labels_by_member] = useState([]); // username from db
   const [tasks_by_member, set_tasks_by_member] = useState([]);
+
   const retrieveTasks = () => {
     var todo = 0;
     var doing = 0;
@@ -131,7 +123,6 @@ const Graphs = props => {
   return (
     <MDBRow className="mt-4">
       <MDBCol sm="6">
-        {/* <h2>{location.state.project}</h2> */}
         <MDBCard style={{ maxWidth: "95%" }}>
           <MDBCardBody>
             <MDBCardTitle>Numarul taskurilor in functie de status</MDBCardTitle>

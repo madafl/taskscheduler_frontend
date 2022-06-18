@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import CreateProject from "./create-project";
 import DataService from "../../services/http-request";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import EditProject from "./edit-project";
-import Graphs from "./graphs";
+import Select from "react-select";
 import {
   MDBRow,
   MDBCol,
@@ -12,7 +12,6 @@ import {
   MDBCard,
   MDBCardBody,
   MDBCardTitle,
-  MDBCardText,
   MDBIcon,
   MDBBtn,
   MDBModal,
@@ -28,6 +27,21 @@ const AllProjects = props => {
   const [openedModal, setOpenedModal] = useState("");
   const [projects, setProjects] = useState([]);
   const [editProject, setEditProject] = useState(false);
+  const [selectedOption, setSelectedOption] = useState({
+    label: "Toate proiectele",
+    value: "all",
+  });
+  const selectOptions = [
+    {
+      label: "Toate proiectele",
+      value: "all",
+    },
+    { label: "Proiectele mele", value: "mine" },
+    { label: "Proiecte din care fac parte", value: "shared" },
+    { label: "Proiecte active", value: "active" },
+    { label: "Proiecte inactive", value: "inactive" },
+    { label: "Proiecte complete", value: "completed" },
+  ];
 
   const toggleShow = modal_id => {
     setBasicModal(!basicModal);
@@ -59,7 +73,6 @@ const AllProjects = props => {
         }
       })
       .catch(e => {
-        console.log(e.response);
         if (e.response.status === 401) {
           console.log(e.response.status);
         } else {
@@ -80,16 +93,12 @@ const AllProjects = props => {
       });
   };
   const handleChange = e => {
-    if (e.target.value === "all") {
+    setSelectedOption(e);
+    if (e.value === "all") {
       refreshProjects();
     } else {
-      find(e.target.value);
+      find(e.value);
     }
-  };
-  let navigate = useNavigate();
-  const routeChange = () => {
-    let path = `/graphs`;
-    navigate(path);
   };
 
   return (
@@ -105,27 +114,20 @@ const AllProjects = props => {
               user={props.user}
               refreshProjects={refreshProjects}
             />
-            <select
-              className="form-select filter mt-2 mb-2"
-              defaultValue={"all"}
+            <Select
+              options={selectOptions}
+              value={selectedOption}
               onChange={handleChange}
-            >
-              <option value="all">Toate proiectele</option>
-              <option value="mine">Proiectele mele</option>
-              <option value="shared">Proiecte din care fac parte</option>
-              {/* <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-              <option value="complete">Complete</option> */}
-            </select>
+              className=" filter mt-2 mb-2"
+            />
           </div>
-
           {projects.map((project, index) => (
             <MDBCol md="6" className="mt-2" key={index}>
               <MDBCard className="mt-2 me-2">
                 <MDBCardBody>
                   <MDBCardTitle>{project.name}</MDBCardTitle>
-                  <MDBCardText>Text</MDBCardText>
-                  <MDBProgress height="20">
+                  {/* <MDBCardText >Text</MDBCardText> */}
+                  <MDBProgress className="mt-4" height="20">
                     <MDBProgressBar
                       width={project.progress}
                       valuemin={0}
@@ -145,6 +147,7 @@ const AllProjects = props => {
                   >
                     Deschide
                   </Link>
+
                   <Link
                     to={`/graphs/${project._id}`}
                     className="position-absolute top-0 end-0 mt-3"

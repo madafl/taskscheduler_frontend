@@ -1,47 +1,55 @@
 import React from "react";
-import {
-  MDBCarousel,
-  MDBCarouselInner,
-  MDBCarouselItem,
-  MDBCarouselElement,
-  MDBCarouselCaption,
-  MDBContainer,
-  MDBBtn,
-} from "mdb-react-ui-kit";
-import landingpage1 from "../assets/landingpage.jpg";
+import { Swiper, SwiperSlide } from "swiper/react";
+// Import Swiper styles
+import "swiper/css";
+import "swiper/css/effect-coverflow";
+import "swiper/css/pagination";
+
+// import required modules
+import { EffectCoverflow, Pagination } from "swiper";
+import { MDBBtn } from "mdb-react-ui-kit";
+import landingpage1 from "../assets/landingPage1.jpg";
+import landingpage2 from "../assets/landingPage2.jpg";
+import landingpage3 from "../assets/landingPage3.jpg";
 
 const LandingPage = () => {
   return (
-    <MDBContainer breakpoint="xxl" className="mt-5 " id="wave">
-      <MDBCarousel showControls showIndicators id="carousel" dark fade>
-        <MDBCarouselInner>
-          <MDBCarouselItem className="active">
-            <MDBCarouselElement src={landingpage1} alt="..." />
-            <MDBCarouselCaption>
-              <h5>First slide label</h5>
-              <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
-            </MDBCarouselCaption>
-          </MDBCarouselItem>
-          <MDBCarouselItem>
-            <MDBCarouselElement src={landingpage1} alt="..." />
-            <MDBCarouselCaption>
-              <h5>Second slide label</h5>
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-            </MDBCarouselCaption>
-          </MDBCarouselItem>
-          <MDBCarouselItem>
-            <MDBCarouselElement src={landingpage1} alt="..." />
-            <MDBCarouselCaption>
-              <MDBBtn className="mt-3">Autentificare</MDBBtn>
-              <MDBBtn className="mt-3">Inregistrare</MDBBtn>
-              <p>
-                Praesent commodo cursus magna, vel scelerisque nisl consectetur.
-              </p>
-            </MDBCarouselCaption>
-          </MDBCarouselItem>
-        </MDBCarouselInner>
-      </MDBCarousel>
-    </MDBContainer>
+    <>
+      <Swiper
+        effect={"coverflow"}
+        grabCursor={true}
+        centeredSlides={true}
+        slidesPerView={"auto"}
+        coverflowEffect={{
+          rotate: 50,
+          stretch: 0,
+          depth: 100,
+          modifier: 1,
+          slideShadows: true,
+        }}
+        pagination={true}
+        modules={[EffectCoverflow, Pagination]}
+        className="mySwiper"
+      >
+        <SwiperSlide>
+          <img src={landingpage1} alt="lp1" className="slider-imgs" />
+        </SwiperSlide>
+        <SwiperSlide>
+          <img src={landingpage2} alt="lp2" className="slider-imgs" />
+        </SwiperSlide>
+        <SwiperSlide>
+          <img src={landingpage3} alt="lp3" className="slider-imgs" />
+        </SwiperSlide>
+      </Swiper>
+      <div className="buttons">
+        <MDBBtn className="m-1 mt-3" href="/login">
+          Autentificare
+        </MDBBtn>
+        <MDBBtn className="m-1 mt-3" href="/login">
+          Inregistrare
+        </MDBBtn>
+      </div>
+    </>
   );
 };
 

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import PasswordChecklist from "react-password-checklist";
 import { useNavigate } from "react-router-dom";
 import DataService from "../../services/http-request";
 import {
@@ -21,6 +22,7 @@ const Login = props => {
   const [titleAlert, setTitleAlert] = useState("");
   const [quoteAlert, setQuoteAlert] = useState("");
   const [colorAlert, setColorAlert] = useState("");
+  const [validPassword, setValidPassword] = useState(true);
 
   const initialUserState = {
     username: "",
@@ -83,19 +85,26 @@ const Login = props => {
         });
     }
   };
+  const checkPasswordValidity = isValid => {
+    setValidPassword(isValid);
+  };
 
   const signup = () => {
-    // daca unul dintre campuri nu este completat
     if (user.username === "" || user.password === "" || user.email === "") {
       setTitleAlert("Contul nu a putut fi creat");
       setQuoteAlert("Completati toate campurile!");
       setTypeAlert("error");
       setColorAlert("#D00000");
       setStatusAlert(true);
-      // daca emailul nu este valid
     } else if (isEmail(user.email) === false) {
       setTitleAlert("Contul nu a putut fi creat");
       setQuoteAlert("Introduceti un email valid.");
+      setColorAlert("#D00000");
+      setTypeAlert("error");
+      setStatusAlert(true);
+    } else if (validPassword === false) {
+      setTitleAlert("Contul nu a putut fi creat");
+      setQuoteAlert("Parola nu respecta criteriile.");
       setColorAlert("#D00000");
       setTypeAlert("error");
       setStatusAlert(true);
@@ -107,7 +116,6 @@ const Login = props => {
       };
       DataService.createUser(data)
         .then(response => {
-          // daca resonse.status 200
           if (response.status === 200) {
             setTitleAlert("Succes");
             setQuoteAlert(response.data.message);
@@ -115,6 +123,7 @@ const Login = props => {
             setStatusAlert(true);
             setColorAlert("#0CCA4A");
             setUser(initialUserState);
+            setValidPassword(!validPassword);
           }
         })
         .catch(e => {
@@ -240,6 +249,18 @@ const Login = props => {
                       name="password"
                     />
                   </MDBInputGroup>
+                  <PasswordChecklist
+                    rules={["minLength", "number", "specialChar"]}
+                    minLength={8}
+                    value={user.password}
+                    onChange={isValid => checkPasswordValidity(isValid)}
+                    messages={{
+                      minLength: "Parola trebuie sa aiba minim 8 caractere.",
+                      specialChar:
+                        "Parola trebuie sa contina cel putin un caracter special.",
+                      number: "Parola trebuie sa contina cel putin un numar.",
+                    }}
+                  />
                   <MDBBtn className="mt-3" onClick={signup}>
                     Creeaza cont
                   </MDBBtn>

@@ -11,17 +11,23 @@ class DataService {
   getTasksByProjectId(id) {
     return http.get(`/project/${id}`);
   }
+  getTasksByUserId(id) {
+    const token = localStorage.getItem("token");
+    return http.get(`/tasks/user/${id}`, {
+      headers: {
+        Authorization: `${JSON.parse(token)}`,
+      },
+    });
+  }
   //http://localhost:5000/api/route/task?title=test&body=testbody&name=mada
   createTask(data) {
     const token = localStorage.getItem("token");
-    console.log(data);
     return http.post(`/task`, data, {
       headers: { Authorization: `${JSON.parse(token)}` },
     });
   }
   updateTask(data) {
     const token = localStorage.getItem("token");
-    console.log(data);
     return http.put(`/task?task_id=${data.id}`, data, {
       headers: { Authorization: `${JSON.parse(token)}` },
     });
@@ -58,7 +64,7 @@ class DataService {
       data
     );
   }
-  login(data) {
+  login(data, user_id) {
     return http.post(
       //  `/login?email=${data.email}&password=${data.password}`,
       `/login?email=${data.email}`,
@@ -68,6 +74,14 @@ class DataService {
   getUserById(id) {
     return http.get(`/user/${id}`);
   }
+  changePassword(data, user_id) {
+    const token = localStorage.getItem("token");
+    return http.post(`/user/changepassword?user_id=${user_id}`, data, {
+      headers: {
+        Authorization: `${JSON.parse(token)}`,
+      },
+    });
+  }
   // PROJECTS
   getProjects() {
     const token = localStorage.getItem("token");
@@ -76,6 +90,9 @@ class DataService {
         Authorization: `${JSON.parse(token)}`,
       },
     });
+  }
+  getProjectById(id) {
+    return http.get(`/project/${id}`);
   }
   createProject(data) {
     const token = localStorage.getItem("token");

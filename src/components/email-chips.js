@@ -20,6 +20,10 @@ export default class EmailChips extends React.Component {
           items: [...this.state.items, this.state.value],
           value: "",
         });
+        this.props.setProject({
+          ...this.props.project,
+          members: this.state.items,
+        });
         this.props.setEmails(this.state.items);
       }
     }
@@ -39,6 +43,10 @@ export default class EmailChips extends React.Component {
         value: e.target.value,
         error: null,
       });
+      this.props.setProject({
+        ...this.props.project,
+        members: this.state.items,
+      });
       this.props.setEmails(this.state.items);
     }
   };
@@ -47,8 +55,11 @@ export default class EmailChips extends React.Component {
     this.setState({
       items: this.state.items.filter(i => i !== item),
     });
+    this.props.setProject({
+      ...this.props.project,
+      members: this.state.items,
+    });
     this.props.setEmails(this.state.items);
-    this.props.setMembers(this.state.items);
   };
 
   isValid(email) {
@@ -81,7 +92,7 @@ export default class EmailChips extends React.Component {
       ...this.props.project,
       members: this.state.items,
     });
-    this.props.setMembers(this.state.items);
+    this.props.setEmails(this.state.items);
   };
 
   render() {

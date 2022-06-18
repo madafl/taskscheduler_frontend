@@ -31,6 +31,7 @@ const EditTask = props => {
             user={props.user}
             editing={props.editing}
             setEditing={props.setEditing}
+            team={props.team}
           />
         </div>
       ) : (

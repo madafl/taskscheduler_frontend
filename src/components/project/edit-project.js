@@ -13,10 +13,8 @@ import {
   MDBModalBody,
   MDBModalFooter,
   MDBInput,
-  MDBRadio,
   MDBIcon,
 } from "mdb-react-ui-kit";
-// import diff from "deep-diff";
 
 //start end name id progress type hideChildren membri
 const EditProject = props => {
@@ -25,7 +23,6 @@ const EditProject = props => {
   const [endDate, setEndDate] = useState(new Date(project.end));
   const [basicModal, setBasicModal] = useState(false);
   const [emails, setEmails] = useState([]); // emailurile introduse
-  const [status, setStatus] = useState(props.project.status);
   const [statusAlert, setStatusAlert] = useState(false);
   const [typeAlert, setTypeAlert] = useState("error");
   const [titleAlert, setTitleAlert] = useState("");
@@ -89,17 +86,12 @@ const EditProject = props => {
       });
   };
 
-  const handleStatusChange = e => {
-    setStatus(e.target.value);
-    setProject({ ...project, status: e.target.value });
-  };
-
   return (
     <>
       <MDBIcon
         fas
         icon="edit fa-lg"
-        className="position-absolute top-0 end-0 m-3 mt-4"
+        className="position-absolute top-0 end-0 m-3 mt-4 chart-pie"
         onClick={toggleShow}
       />
       {props.editProject ? (
@@ -150,36 +142,6 @@ const EditProject = props => {
                   type="text"
                   disabled
                 />
-                <label className="me-2 mt-2">Status</label>
-                <div>
-                  <MDBRadio
-                    name="active"
-                    id="active"
-                    value="active"
-                    label="Activ"
-                    inline
-                    checked={status === "active" ? true : false}
-                    onChange={handleStatusChange}
-                  />
-                  <MDBRadio
-                    name="inactive"
-                    id="inactive"
-                    value="inactive"
-                    label="Inactiv"
-                    inline
-                    checked={status === "inactive" ? true : false}
-                    onChange={handleStatusChange}
-                  />
-                  <MDBRadio
-                    name="completed"
-                    id="completed"
-                    value="completed"
-                    label="Complet"
-                    inline
-                    checked={status === "completed" ? true : false}
-                    onChange={handleStatusChange}
-                  />
-                </div>
                 <label className="mt-2">Echipa</label>
                 <EmailChips
                   emails={members}

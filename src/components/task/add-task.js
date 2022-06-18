@@ -39,6 +39,7 @@ const AddTask = props => {
             project_id={props.project.id} // id-ul proiectului
             user={props.user} // userul logat pt post
             editing={false} // adauga nu editeaza
+            team={props.team} // echipa pentru asignare
           />
         </div>
       ) : (

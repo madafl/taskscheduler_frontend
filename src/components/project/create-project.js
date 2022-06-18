@@ -44,8 +44,7 @@ const CreateProject = props => {
   const [titleAlert, setTitleAlert] = useState("");
   const [quoteAlert, setQuoteAlert] = useState("");
   const [colorAlert, setColorAlert] = useState("");
-  const [members, setMembers] = useState([]); // emailuri membrii din proiect
-
+  const [submitted, setSubmitted] = useState(false);
   const toggleShow = () => setBasicModal(!basicModal);
 
   const handleInputChange = event => {
@@ -68,18 +67,22 @@ const CreateProject = props => {
       emails: emails,
       status: status,
     };
-    console.log(project);
     DataService.createProject(data)
       .then(response => {
-        console.log(response);
-        setTitleAlert("Succes");
-        setQuoteAlert("Proiectul a fost creat.");
-        setTypeAlert("success");
-        setStatusAlert(true);
-        setColorAlert("#0CCA4A");
-        props.refreshProjects();
-        toggleShow();
-        setProject(initialProjectState);
+        if (response.status === 200) {
+          setTitleAlert("Succes");
+          setQuoteAlert("Proiectul a fost creat.");
+          setTypeAlert("success");
+          setStatusAlert(true);
+          setColorAlert("#0CCA4A");
+          props.refreshProjects();
+          toggleShow();
+          setProject(initialProjectState);
+          setSubmitted(true);
+          setStartDate(new Date());
+          setEndDate(new Date());
+          setEmails([]);
+        }
       })
       .catch(e => {
         if (e.response.status === 418) {
@@ -90,14 +93,20 @@ const CreateProject = props => {
           setStatusAlert(true);
           setTitleAlert("Eroare!");
           setTypeAlert("error");
+        } else if (e.response.status === 500) {
+          setQuoteAlert(e.response.data.error);
+          setColorAlert("#D00000");
+          setStatusAlert(true);
+          setTitleAlert("Eroare!");
+          setTypeAlert("error");
         } else {
           console.log(e.response);
         }
       });
   };
-  const handleStatusChange = e => {
-    setStatus(e.target.value);
-  };
+  // const handleStatusChange = e => {
+  //   setStatus(e.target.value);
+  // };
 
   return (
     <>
@@ -150,43 +159,14 @@ const CreateProject = props => {
                   type="text"
                   disabled
                 />
-                <label className="me-2 mt-2">Status</label>
-                <div>
-                  <MDBRadio
-                    name="active"
-                    id="active"
-                    value="active"
-                    label="Activ"
-                    inline
-                    checked={status === "active" ? true : false}
-                    onChange={handleStatusChange}
-                  />
-                  <MDBRadio
-                    name="inactive"
-                    id="inactive"
-                    value="inactive"
-                    label="Inactiv"
-                    inline
-                    checked={status === "inactive" ? true : false}
-                    onChange={handleStatusChange}
-                  />
-                  <MDBRadio
-                    name="completed"
-                    id="completed"
-                    value="completed"
-                    label="Complet"
-                    inline
-                    checked={status === "completed" ? true : false}
-                    onChange={handleStatusChange}
-                  />
-                </div>
                 <label className="mt-2">Echipa</label>
                 <EmailChips
                   emails={emails}
                   setEmails={setEmails}
+                  project={project}
                   setProject={setProject}
                   current_user_email={props.user.email}
-                  setMembers={setMembers}
+                  submitted={submitted}
                 />
               </MDBModalBody>
             </div>

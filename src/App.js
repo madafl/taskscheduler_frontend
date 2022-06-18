@@ -9,8 +9,12 @@ import Task from "./components/task/all-tasks";
 import AllProjects from "./components/project/all-projects";
 import LandingPage from "./components/landing-page";
 import Avatar from "react-avatar";
+import Stats from "./components/dashboard/stats";
+
 import Profile from "./components/dashboard/profile";
 import Graphs from "./components/project/graphs";
+import logo from "./assets/logo.png";
+
 import {
   MDBBtn,
   MDBContainer,
@@ -68,10 +72,13 @@ function App() {
   }, []);
 
   return (
-    <MDBContainer fluid>
+    <MDBContainer fluid className="full-height">
       <MDBNavbar expand="lg" light bgColor="light">
         <MDBContainer fluid>
-          <MDBNavbarBrand href="/">Task Scheduler</MDBNavbarBrand>
+          <MDBNavbarBrand href="/">
+            <img src={logo} height="40" alt="" loading="lazy" />
+            Task Scheduler
+          </MDBNavbarBrand>
           <MDBNavbarToggler
             aria-controls="navbarSupportedContent"
             aria-expanded="false"
@@ -108,7 +115,14 @@ function App() {
                 </MDBDropdownToggle>
                 <MDBDropdownMenu>
                   <MDBDropdownItem>
-                    <MDBDropdownLink href="/profile">Profil</MDBDropdownLink>
+                    <MDBDropdownLink href={`/stats/${userId}`}>
+                      Statistici
+                    </MDBDropdownLink>
+                  </MDBDropdownItem>
+                  <MDBDropdownItem>
+                    <MDBDropdownLink href={`/profile/${userId}`}>
+                      Profil
+                    </MDBDropdownLink>
                   </MDBDropdownItem>
                   <MDBDropdownItem>
                     <MDBDropdownLink onClick={logout} href="/">
@@ -155,15 +169,17 @@ function App() {
         <Route path="/id/:id" element={<Task user={user} login={login} />} />
         <Route
           path="/project/:id"
-          element={<AllTasks user={user} login={login} />}
+          element={<AllTasks user={user} login={login} userId={userId} />}
         />
         <Route
           path="*"
           element={
             <main style={{ padding: "1rem" }}>
-              <section class="error_section">
-                <p class="error_section_subtitle">Pagina nu a fost gasita!</p>
-                <h1 class="error_title">
+              <section className="error_section">
+                <p className="error_section_subtitle">
+                  Pagina nu a fost gasita!
+                </p>
+                <h1 className="error_title">
                   <p>404</p>
                   404
                 </h1>
@@ -175,7 +191,11 @@ function App() {
           }
         />
         <Route
-          path="/profile"
+          path="/stats/:id"
+          element={<Stats user={user} userId={userId} />}
+        />
+        <Route
+          path="/profile/:id"
           element={<Profile user={user} userId={userId} />}
         />
         <Route

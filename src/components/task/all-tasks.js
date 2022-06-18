@@ -20,6 +20,7 @@ const AllTasks = props => {
   const [task, setTask] = useState({}); // taskul selectat
   const [showGantt, setShowGantt] = useState(false); // afisare gantt
   const [editing, setEditing] = useState(false); // editare task
+  const [team, setTeam] = useState([]); // echipa proiectului
 
   // Alerta
   const [statusAlert, setStatusAlert] = useState(false);
@@ -58,13 +59,20 @@ const AllTasks = props => {
               id: pr._id,
               type: pr.type,
               progress: Number(pr.progress),
+              // project_owner_id: pr.project_owner_id,
               hideChildren: false,
+              members: pr.members,
               styles: {
                 progressColor: "#16db93",
                 progressSelectedColor: "#12C281",
               },
             };
+            // cand adaug proiectul in state, mapez membrii si apelez getUserEmail pentru a obtine emailul lor=> functia va adauga emailul in team
             setProject(newProject);
+            getEmailsForTeamMembers(pr.project_owner_id);
+            pr.members.map(member => {
+              getEmailsForTeamMembers(member);
+            });
             return tasks.push(newProject);
           });
 
@@ -87,6 +95,8 @@ const AllTasks = props => {
                 },
                 project: id,
                 dependencies: task.dependencies,
+                user_info: task.user_info.user_id,
+                assigned_user: task.user_info.assigned_user,
               };
               return tasks.push(newTask);
             } else {
@@ -101,6 +111,7 @@ const AllTasks = props => {
                 progress: Number(task.progress),
                 project: id,
                 dependencies: task.dependencies,
+                user_info: task.user_info.user_id,
               };
               return tasks.push(newTask);
             }
@@ -161,7 +172,6 @@ const AllTasks = props => {
         };
         DataService.updateDateProgressTask(data, "progress")
           .then(response => {
-            console.log(response);
             if (response.data.status === 200) {
               setTasks(newTasks);
             }
@@ -256,6 +266,20 @@ const AllTasks = props => {
     getBoundingClientRect: generateGetBoundingClientRect(),
   };
 
+  const getEmailsForTeamMembers = id => {
+    DataService.getUserById(id)
+      .then(response => {
+        const teamForSelect = {
+          label: response.data,
+          value: id,
+        };
+        team.push(teamForSelect); // to use in assign person to task
+      })
+      .catch(e => {
+        console.log(e);
+      });
+  };
+
   return (
     <div onClick={getEl}>
       <div>
@@ -263,6 +287,7 @@ const AllTasks = props => {
           onViewModeChange={viewMode => setView(viewMode)}
           onViewListChange={setIsChecked}
           isChecked={isChecked}
+          project={project}
         />
         <hr></hr>
         <div>
@@ -278,12 +303,14 @@ const AllTasks = props => {
                 onDoubleClick={handleDoubleClick}
                 columnWidth={columnWidth}
                 onExpanderClick={handleExpanderClick}
+                locale={"ro-RO"}
               />
               <AddTask
                 user={props.user} // pt user id la post
                 minStartDate={location.state.project.start} // data de inceput a proiectului pt datepicker
                 maxEndDate={location.state.project.end} // data de sfarsit a proiectului pt datepicker
                 project={project} // poriectul - id pt deepndent tasks si nume pt afisare
+                team={team}
               />
               <EditTask
                 user={props.user}
@@ -293,6 +320,7 @@ const AllTasks = props => {
                 setEditing={setEditing}
                 task={task}
                 project={project}
+                team={team}
               />
             </div>
           ) : (
@@ -301,6 +329,7 @@ const AllTasks = props => {
               minStartDate={location.state.project.start}
               maxEndDate={location.state.project.end}
               project={project}
+              team={team}
             />
           )}
           {showEditDeletePopup ? (

@@ -6,6 +6,7 @@ import { ro } from "date-fns/locale";
 import "react-datepicker/dist/react-datepicker.css";
 import DataService from "../../services/http-request";
 import ReactJsAlert from "reactjs-alert";
+import { Link } from "react-router-dom";
 import {
   MDBBtn,
   MDBModal,
@@ -22,12 +23,14 @@ import {
   MDBTabsPane,
   MDBInput,
   MDBTextArea,
+  MDBBadge,
   MDBRange,
   MDBPopover,
   MDBPopoverBody,
   MDBPopoverHeader,
   MDBIcon,
 } from "mdb-react-ui-kit";
+import { set } from "date-fns";
 registerLocale("ro", ro);
 
 const TaskPopup = props => {
@@ -39,18 +42,20 @@ const TaskPopup = props => {
     setFillActive(value);
   };
 
-  const [task, setTask] = useState(props.task);
-  const [dependentTasks, setDependentTasks] = useState([]);
-  const [dependencies, setDependencies] = useState([]);
-
-  const [startDate, setStartDate] = useState(new Date()); //
-  const [endDate, setEndDate] = useState(new Date()); //
+  const [task, setTask] = useState(props.task); // taskul de editat
+  const [dependentTasks, setDependentTasks] = useState([]); // taskurile dependente de pus in select
+  const [dependencies, setDependencies] = useState([]); // id-urile taskurilor selectate ce vor fi adaugate in db
+  const [defaultDependencies, setDefaultDependencies] = useState([]); // pt edit task=> taskurile dependente
+  const [startDate, setStartDate] = useState(""); //
+  const [endDate, setEndDate] = useState(""); //
+  const [assignedUserEmail, setAssignedUserEmail] = useState({}); // assigned_user pentru afisarea in select => assignedUserEmail.value idul de trimis in db
 
   const [statusAlert, setStatusAlert] = useState(false);
   const [typeAlert, setTypeAlert] = useState("error");
   const [titleAlert, setTitleAlert] = useState("");
   const [quoteAlert, setQuoteAlert] = useState("");
   const [colorAlert, setColorAlert] = useState("");
+  const [userEmail, setUserEmail] = useState("");
 
   const retrieveDependentTasks = () => {
     DataService.getTasksByProjectId(props.project_id)
@@ -67,12 +72,62 @@ const TaskPopup = props => {
         console.log(e);
       });
   };
+  const retrieveDependentSelectedTasks = () => {
+    if (props.project_id !== undefined && task.dependencies !== undefined) {
+      DataService.getTasksByProjectId(props.project_id)
+        .then(response => {
+          const array = [];
+          task.dependencies.map(d => {
+            response.data[1].map(task => {
+              if (d === task._id) {
+                const newTask = {
+                  label: task.name,
+                  value: task._id,
+                };
+                return array.push(newTask);
+              }
+            });
+          });
+          setDefaultDependencies(array);
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    }
+  };
+
   useEffect(() => {
     setTask(props.task);
-    if (props.project_id && dependentTasks.length === 0) {
+    if (props.project_id !== undefined && dependentTasks.length === 0) {
       retrieveDependentTasks();
+      retrieveDependentSelectedTasks();
     }
-  }, [props.task]);
+    if (props.editing && task.user_info !== "") {
+      getUserEmail();
+    }
+    if (props.editing) {
+      setStartDate(new Date(task.start));
+      setEndDate(new Date(task.end));
+    } else {
+      setStartDate(new Date());
+      setEndDate(new Date());
+    }
+    if (task.assigned_user !== undefined) {
+      getAssignedUserEmail();
+    }
+
+    if (task.dependencies !== []) {
+      setDependencies(task.dependencies);
+      retrieveDependentSelectedTasks();
+    }
+    if (!props.basicModal) {
+      setAssignedUserEmail({ label: "", value: "" });
+      setDefaultDependencies({
+        label: "",
+        value: "",
+      });
+    }
+  }, [props.task, props.editing, task.assigned_user]);
 
   const handleInputChange = event => {
     const value = event.target.value;
@@ -82,15 +137,65 @@ const TaskPopup = props => {
     const [start, end] = dates;
     setStartDate(start);
     setEndDate(end);
+    console.log(dates);
   };
 
   const saveTask = () => {
-    if (props.editing) {
-      var data = {};
+    if (assignedUserEmail.value === "") {
+      setQuoteAlert("Alegeti persoana care se ocupa de task.\n");
+      setColorAlert("#D00000");
+      setStatusAlert(true);
+      setTitleAlert("Eroare");
+      setTypeAlert("error");
+    } else {
+      if (props.editing) {
+        var data = {};
 
-      if (task.type === "task") {
-        data = {
-          id: task.id,
+        if (task.type === "task") {
+          data = {
+            id: task.id,
+            name: task.name,
+            description: task.description,
+            start: startDate,
+            end: endDate,
+            progress: task.progress,
+            type: task.type,
+            dependencies: dependencies,
+            backgroundColor: task.backgroundColor,
+            progressColor: task.progressColor,
+            project_id: props.project_id,
+            assigned_user: assignedUserEmail.value,
+          };
+        } else {
+          data = {
+            id: task.id,
+            name: task.name,
+            description: task.description,
+            start: startDate,
+            end: startDate,
+            progress: task.progress,
+            type: task.type,
+            dependencies: dependencies,
+            project_id: props.project_id,
+          };
+        }
+        DataService.updateTask(data)
+          .then(response => {
+            if (response.status === 200) {
+              setQuoteAlert("Taskul a fost actualizat!\n");
+              setColorAlert("#0CCA4A");
+              setStatusAlert(true);
+              setTitleAlert("Succes!");
+              setTypeAlert("success");
+            }
+            setTimeout(window.location.reload(false), 3000);
+          })
+          .catch(e => {
+            console.log(e);
+          });
+      } else {
+        console.log(dependencies);
+        const data = {
           name: task.name,
           description: task.description,
           start: startDate,
@@ -101,73 +206,84 @@ const TaskPopup = props => {
           backgroundColor: task.backgroundColor,
           progressColor: task.progressColor,
           project_id: props.project_id,
+          assigned_user: assignedUserEmail.value,
         };
-      } else {
-        data = {
-          id: task.id,
-          name: task.name,
-          description: task.description,
-          start: startDate,
-          end: startDate,
-          progress: task.progress,
-          type: task.type,
-          dependencies: dependencies,
-          project_id: props.project_id,
-        };
+        DataService.createTask(data)
+          .then(response => {
+            if (response.status === 200) {
+              setQuoteAlert("Taskul a fost creat cu succes!\n");
+              setColorAlert("#0CCA4A");
+              setStatusAlert(true);
+              setTitleAlert("Succes!");
+              setTypeAlert("success");
+            }
+
+            setTimeout(window.location.reload(false), 3000);
+          })
+          .catch(e => {
+            console.log(e);
+          });
       }
-
-      DataService.updateTask(data)
-        .then(response => {
-          if (response.status === 200) {
-            setQuoteAlert("Taskul a fost actualizat!\n");
-            setColorAlert("#0CCA4A");
-            setStatusAlert(true);
-            setTitleAlert("Succes!");
-            setTypeAlert("success");
-          }
-          setTimeout(window.location.reload(false), 3000);
-        })
-        .catch(e => {
-          console.log(e);
-        });
-    } else {
-      const data = {
-        name: task.name,
-        description: task.description,
-        start: startDate,
-        end: endDate,
-        progress: task.progress,
-        type: task.type,
-        dependencies: dependencies,
-        backgroundColor: task.backgroundColor,
-        progressColor: task.progressColor,
-        project_id: props.project_id,
-      };
-      console.log(data);
-      DataService.createTask(data)
-        .then(response => {
-          if (response.status === 200) {
-            setQuoteAlert("Taskul a fost creat cu succes!\n");
-            setColorAlert("#0CCA4A");
-            setStatusAlert(true);
-            setTitleAlert("Succes!");
-            setTypeAlert("success");
-          }
-
-          setTimeout(window.location.reload(false), 3000);
-        })
-        .catch(e => {
-          console.log(e);
-        });
     }
   };
+
   const handleDependenciesChange = selectedOption => {
+    // daca selectedOption.value === task.id
     const array = [];
+    const arrayIds = [];
     selectedOption.map(option => {
-      array.push(option.value);
+      if (task.id !== option.value) {
+        const new_dependency = {
+          label: option.label,
+          value: option.value,
+        };
+        arrayIds.push(option.value);
+        array.push(new_dependency);
+        console.log(dependencies);
+      } else {
+        setTitleAlert("Eroare");
+        setQuoteAlert("Task-ul nu poate depinde de el insusi!");
+        setColorAlert("#D00000");
+        setTypeAlert("error");
+        setStatusAlert(true);
+      }
     });
-    setDependencies(array);
-    console.log(dependencies);
+    setDefaultDependencies(array);
+    setDependencies(arrayIds);
+    console.log(defaultDependencies);
+  };
+  const getUserEmail = () => {
+    DataService.getUserById(task.user_info)
+      .then(response => {
+        setUserEmail(response.data);
+      })
+      .catch(e => {
+        console.log(e);
+      });
+    // const project_owner = {
+    //   label: userEmail,
+    //   value: task.user_info,
+    // };
+    // props.team.push(project_owner);
+  };
+  const getAssignedUserEmail = () => {
+    DataService.getUserById(task.assigned_user)
+      .then(response => {
+        const new_user = {
+          label: response.data,
+          value: task.assigned_user,
+        };
+        setAssignedUserEmail(new_user);
+      })
+      .catch(e => {
+        console.log(e);
+      });
+  };
+  const handleAssignedUserChange = selectedOption => {
+    setAssignedUserEmail({
+      label: selectedOption.label,
+      value: selectedOption.value,
+    });
   };
 
   return (
@@ -320,11 +436,12 @@ const TaskPopup = props => {
                   <label className="form-label"> Depinde de: </label>
                   <Select
                     isMulti
-                    name="colors"
+                    name="dependencies"
                     options={dependentTasks}
                     className="basic-multi-select"
                     classNamePrefix="select"
                     onChange={handleDependenciesChange}
+                    value={defaultDependencies}
                   />
 
                   <label className="form-label mt-2">Proiect</label>
@@ -336,19 +453,38 @@ const TaskPopup = props => {
                   >
                     <option value="1">{props.project_name}</option>
                   </select>
+                  <label className="form-label mt-2">Persoana desemnata</label>
+                  <Select
+                    className="basic-single"
+                    classNamePrefix="select"
+                    value={assignedUserEmail}
+                    options={props.team}
+                    onChange={handleAssignedUserChange}
+                  />
                 </MDBTabsPane>
               </MDBTabsContent>
             </MDBModalBody>
 
             <MDBModalFooter>
+              {props.editing ? (
+                <h6 className="">
+                  Task creat de
+                  <Link to={`/stats/${task.user_info}`}>
+                    <MDBBadge pill className="mx-2 mt-2">
+                      {/* Emailul utilizatorului care a creat taskul => task.user_info.user_id {props.user.email} */}
+                      {userEmail}
+                    </MDBBadge>
+                  </Link>
+                </h6>
+              ) : null}
               <MDBBtn color="danger" onClick={props.toggleShow}>
                 Renunta
               </MDBBtn>
               {task.name !== "" ? (
-                <MDBBtn onClick={saveTask}>Adauga</MDBBtn>
+                <MDBBtn onClick={saveTask}>Salveaza</MDBBtn>
               ) : (
                 <MDBBtn onClick={saveTask} disabled>
-                  Adauga
+                  Salveaza
                 </MDBBtn>
               )}
               {/* <MDBBtn onClick={saveTask}>Adauga</MDBBtn> */}
