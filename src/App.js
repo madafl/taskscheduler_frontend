@@ -10,11 +10,9 @@ import AllProjects from "./components/project/all-projects";
 import LandingPage from "./components/landing-page";
 import Avatar from "react-avatar";
 import Stats from "./components/dashboard/stats";
-
 import Profile from "./components/dashboard/profile";
 import Graphs from "./components/project/graphs";
 import logo from "./assets/logo.png";
-
 import {
   MDBBtn,
   MDBContainer,

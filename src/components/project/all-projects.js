@@ -126,7 +126,6 @@ const AllProjects = props => {
               <MDBCard className="mt-2 me-2">
                 <MDBCardBody>
                   <MDBCardTitle>{project.name}</MDBCardTitle>
-                  {/* <MDBCardText >Text</MDBCardText> */}
                   <MDBProgress className="mt-4" height="20">
                     <MDBProgressBar
                       width={project.progress}

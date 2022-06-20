@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
+import Select from "react-select";
 import DataService from "../../services/http-request";
 import ChangeViewMode from "./changeViewMode";
 import { Gantt, ViewMode } from "gantt-task-react";
 import "gantt-task-react/dist/index.css";
 import AddTask from "./add-task";
 import TasksSettings from "./tasks-settings";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams, useLocation, Link } from "react-router-dom";
 import ReactJsAlert from "reactjs-alert";
 import EditTask from "./edit-task";
+import { MDBBadge } from "mdb-react-ui-kit";
 
 const AllTasks = props => {
   const { id } = useParams(); //id-ul proiectului
@@ -279,6 +281,9 @@ const AllTasks = props => {
         console.log(e);
       });
   };
+  const goToUserProfile = selectedOption => {
+    return (window.location.href = `/stats/${selectedOption.value}`);
+  };
 
   return (
     <div onClick={getEl}>
@@ -288,7 +293,16 @@ const AllTasks = props => {
           onViewListChange={setIsChecked}
           isChecked={isChecked}
           project={project}
+          team={team}
+          goToUserProfile={goToUserProfile}
         />
+        <hr></hr>
+        {/* <Select
+          className="basic-single team-select"
+          classNamePrefix="select"
+          options={team}
+          onChange={goToUserProfile}
+        /> */}
         <hr></hr>
         <div>
           {showGantt && tasks.length !== 0 ? (
@@ -305,6 +319,7 @@ const AllTasks = props => {
                 onExpanderClick={handleExpanderClick}
                 locale={"ro-RO"}
               />
+
               <AddTask
                 user={props.user} // pt user id la post
                 minStartDate={location.state.project.start} // data de inceput a proiectului pt datepicker

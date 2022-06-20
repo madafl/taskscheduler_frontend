@@ -14,10 +14,8 @@ import {
   MDBModalBody,
   MDBModalFooter,
   MDBInput,
-  MDBRadio,
 } from "mdb-react-ui-kit";
 
-//start end name id progress type hideChildren membri
 const CreateProject = props => {
   const token = localStorage.getItem("token");
   const decodedToken = decodeToken(token);
@@ -104,9 +102,6 @@ const CreateProject = props => {
         }
       });
   };
-  // const handleStatusChange = e => {
-  //   setStatus(e.target.value);
-  // };
 
   return (
     <>
@@ -136,6 +131,7 @@ const CreateProject = props => {
                     onChange={handleInputChange}
                     value={project.name}
                     label="Adauga un titlu"
+                    required
                   />
                 </div>
                 <label className="mt-2">Interval</label>

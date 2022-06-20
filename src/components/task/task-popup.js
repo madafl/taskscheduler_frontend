@@ -30,7 +30,6 @@ import {
   MDBPopoverHeader,
   MDBIcon,
 } from "mdb-react-ui-kit";
-import { set } from "date-fns";
 registerLocale("ro", ro);
 
 const TaskPopup = props => {
@@ -115,7 +114,6 @@ const TaskPopup = props => {
     if (task.assigned_user !== undefined) {
       getAssignedUserEmail();
     }
-
     if (task.dependencies !== []) {
       setDependencies(task.dependencies);
       retrieveDependentSelectedTasks();
@@ -137,7 +135,6 @@ const TaskPopup = props => {
     const [start, end] = dates;
     setStartDate(start);
     setEndDate(end);
-    console.log(dates);
   };
 
   const saveTask = () => {
@@ -194,7 +191,6 @@ const TaskPopup = props => {
             console.log(e);
           });
       } else {
-        console.log(dependencies);
         const data = {
           name: task.name,
           description: task.description,
@@ -239,7 +235,6 @@ const TaskPopup = props => {
         };
         arrayIds.push(option.value);
         array.push(new_dependency);
-        console.log(dependencies);
       } else {
         setTitleAlert("Eroare");
         setQuoteAlert("Task-ul nu poate depinde de el insusi!");
@@ -250,7 +245,6 @@ const TaskPopup = props => {
     });
     setDefaultDependencies(array);
     setDependencies(arrayIds);
-    console.log(defaultDependencies);
   };
   const getUserEmail = () => {
     DataService.getUserById(task.user_info)

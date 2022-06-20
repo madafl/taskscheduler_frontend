@@ -64,12 +64,8 @@ class DataService {
       data
     );
   }
-  login(data, user_id) {
-    return http.post(
-      //  `/login?email=${data.email}&password=${data.password}`,
-      `/login?email=${data.email}`,
-      data
-    );
+  login(data) {
+    return http.post(`/login?email=${data.email}`, data);
   }
   getUserById(id) {
     return http.get(`/user/${id}`);
