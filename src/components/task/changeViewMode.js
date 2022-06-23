@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { ViewMode } from "gantt-task-react";
 import Select from "react-select";
 import "gantt-task-react/dist/index.css";

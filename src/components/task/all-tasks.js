@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from "react";
-import Select from "react-select";
 import DataService from "../../services/http-request";
 import ChangeViewMode from "./changeViewMode";
 import { Gantt, ViewMode } from "gantt-task-react";
 import "gantt-task-react/dist/index.css";
 import AddTask from "./add-task";
 import TasksSettings from "./tasks-settings";
-import { useParams, useLocation, Link } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import ReactJsAlert from "reactjs-alert";
 import EditTask from "./edit-task";
-import { MDBBadge } from "mdb-react-ui-kit";
 
 const AllTasks = props => {
   const { id } = useParams(); //id-ul proiectului
@@ -296,13 +294,6 @@ const AllTasks = props => {
           team={team}
           goToUserProfile={goToUserProfile}
         />
-        <hr></hr>
-        {/* <Select
-          className="basic-single team-select"
-          classNamePrefix="select"
-          options={team}
-          onChange={goToUserProfile}
-        /> */}
         <hr></hr>
         <div>
           {showGantt && tasks.length !== 0 ? (
