@@ -97,7 +97,6 @@ const Profile = props => {
   const checkPasswordValidity = isValid => {
     setValidPassword(isValid);
   };
-  const refreshInputs = () => {};
 
   return (
     <>
@@ -203,13 +202,7 @@ const Profile = props => {
                             match: "Parolele nu corespund.",
                           }}
                         />
-                        <MDBBtn
-                          className="mt-3"
-                          color="grey"
-                          onClick={refreshInputs}
-                        >
-                          Renunta
-                        </MDBBtn>
+
                         <MDBBtn className="mt-3 mx-3" onClick={changePassword}>
                           Salveaza
                         </MDBBtn>

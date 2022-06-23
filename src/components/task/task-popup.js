@@ -254,11 +254,6 @@ const TaskPopup = props => {
       .catch(e => {
         console.log(e);
       });
-    // const project_owner = {
-    //   label: userEmail,
-    //   value: task.user_info,
-    // };
-    // props.team.push(project_owner);
   };
   const getAssignedUserEmail = () => {
     DataService.getUserById(task.assigned_user)

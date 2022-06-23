@@ -23,9 +23,9 @@ const Stats = props => {
   const [user, setUser] = useState([]);
 
   useEffect(() => {
-    retrieveData();
-    retrieveProjects();
-    getUser();
+    retrieveData(); // todo, doing, due soon
+    retrieveProjects(); // pt proiecte active
+    getUser(); //pt email
   });
   //[props]
 
@@ -44,7 +44,9 @@ const Stats = props => {
             } else if (task.progress === 0) {
               todo += 1;
             }
-            if (new Date(task.end) - today < 3) {
+            const end_date = moment(task.end);
+            const number_of_days = end_date.diff(today, "days");
+            if (number_of_days <= 3 && task.progress !== 100) {
               const newTask = {
                 name: task.name,
                 start: task.start,
