@@ -158,7 +158,7 @@ const Login = props => {
               <div className="form sign-in">
                 <div className="login-form ">
                   <MDBTypography blockquote>
-                    <p>Login</p>
+                    <p>Autentificare</p>
                   </MDBTypography>
                   <label className="mt-2">Email</label>
                   <MDBInput
@@ -210,7 +210,7 @@ const Login = props => {
                 </div>
                 <div className="form sign-up">
                   <MDBTypography blockquote>
-                    <p>Sign up</p>
+                    <p>Inregistrare</p>
                   </MDBTypography>
                   <label className="mt-2">Nume de utilizator</label>
                   <MDBInput

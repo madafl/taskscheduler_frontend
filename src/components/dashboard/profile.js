@@ -203,7 +203,7 @@ const Profile = props => {
                           }}
                         />
 
-                        <MDBBtn className="mt-3 mx-3" onClick={changePassword}>
+                        <MDBBtn className="mt-3 " onClick={changePassword}>
                           Salveaza
                         </MDBBtn>
                       </MDBTabsPane>

@@ -187,10 +187,10 @@ const AllProjects = props => {
                                 ></MDBBtn>
                               </MDBModalHeader>
                               <MDBModalBody>
-                                <h4>
+                                <h5>
                                   Esti sigur ca vrei sa stergi proiectul{" "}
                                   <b>{project.name}</b> ?
-                                </h4>
+                                </h5>
                               </MDBModalBody>
                               <MDBModalFooter>
                                 <MDBBtn

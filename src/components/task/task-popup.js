@@ -367,7 +367,7 @@ const TaskPopup = props => {
                           <b>Reper de referinta (milestone)</b> - Este un
                           eveniment intermediar important care survine in cursul
                           realizarii unei activitati, asociat cu obtinerea unui
-                          rezultat important sau cu o analiza de stadiu."
+                          rezultat important sau cu o analiza de stadiu.
                         </p>
                       </MDBPopoverBody>
                     </MDBPopover>

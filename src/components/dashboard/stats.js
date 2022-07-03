@@ -46,7 +46,12 @@ const Stats = props => {
             }
             const end_date = moment(task.end);
             const number_of_days = end_date.diff(today, "days");
-            if (number_of_days <= 3 && task.progress !== 100) {
+
+            if (
+              number_of_days <= 3 &&
+              number_of_days > 0 &&
+              task.progress !== 100
+            ) {
               const newTask = {
                 name: task.name,
                 start: task.start,
